@@ -1,12 +1,36 @@
 <#@ output extension=".c" #>
 <#@ template language="C#" #>
 
+/**
+ * @brief this file is Auto generated 
+ * DO NOT EDIT IT !!!
+ */
+
 <# 
-	foreach(var obj in Objs) {
-		var idx_hex_str = $"{obj.Index:X4}";
+	foreach(var entry in ObjNames) {
+		var idx = $"{entry.Key:X4}";
+		var name = $"{entry.Value}";
 #>
-static const char obj_name_<#= idx_hex_str #>[] = "<#= obj.Name #>";
+static const char obj_name_<#= idx #>[] = "<#= name #>";
 <# 
 	} 
 #>
 
+<#
+	foreach(var obj in FlattenedEntriesLookup) {
+		var idx_str = $"{obj.Key:x4}";
+#>
+const obj_desc_t sdo_<#= idx_str #>[] = {
+<#
+		foreach(var subEntry in obj) {
+#>
+	{ .subindex = <#= $"0x{subEntry.SubIndex:x4}" #>, .bitlength = <#= $"0x{subEntry.BitSize:x}" #>, .flags = <#= $"{subEntry.AccessType}"#>, .value = <#= $"0x{subEntry.Value:x8}" #>, },
+<#
+		}
+#>
+};
+
+<#
+	}
+#>
+ 
