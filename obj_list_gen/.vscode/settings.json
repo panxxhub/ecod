@@ -1,0 +1,121 @@
+{
+	"editor.fontFamily": "'Monaspace Argon', 'Jetbrains Mono', 'Fira Code Retina', 'Monaspace Argon Var', 'Monaspace Radon Var', 'Monaspace Xenon', 'Monaspace Krypton', 'Cascadia Code', Consolas, 'Courier New', monospace",
+	"editor.fontSize": 17,
+	"editor.fontLigatures": "'calt','liga','dlig','ss01','ss02','ss03','ss04','ss05','ss06','ss07','ss08'",
+	"editor.inlayHints.enabled": "on",
+	"editor.inlayHints.fontFamily": "'Monaspace Radon Var', 'Monaspace Argon', 'Monaspace Xenon', 'Monaspace Krypton', 'Fira Code Retina', 'Jetbrains Mono', 'Cascadia Code', Consolas, 'Courier New', monospace",
+	"editor.inlineSuggest.enabled": true,
+	"editor.fontVariations": true,
+	"editor.linkedEditing": true,
+	"editor.formatOnSave": true,
+	"editor.stickyScroll.enabled": true,
+	"github.copilot.advanced": {
+		"enabled": true,
+		"showAdvancedSuggestions": true,
+		"showBasicSuggestions": true,
+		"showComments": true,
+		"showLiterals": true,
+		"showMethods": true,
+		"showSnippets": true,
+		"showVariables": true,
+		"showWords": true,
+	},
+	"github.copilot.enable": {
+		"*": true,
+		"plaintext": false,
+		"scminput": false
+	},
+	"csharp.semanticHighlighting.enabled": true,
+	"editor.semanticHighlighting.enabled": true,
+	"editor.renderLineHighlight": "all",
+	"editor.renderWhitespace": "boundary",
+	"editor.minimap.renderCharacters": true,
+	"terminal.integrated.fontFamily": "'Hasklug NF', 'Monaspace Argon Var'",
+	"workbench.colorTheme": "Default Dark Modern",
+	"editor.semanticTokenColorCustomizations": {
+		"rules": {
+			"enum": {
+				"fontStyle": "bold"
+			},
+			"enumMember": {
+				"foreground": "#a0cd00",
+				"fontStyle": "italic bold",
+				"italic": true
+			},
+			"constant": {
+				"fontStyle": "bold underline",
+				"foreground": "#b9d1cc"
+			},
+			"constParameter": {
+				"fontStyle": "bold underline",
+				"foreground": "#b9d1cc"
+			},
+			"function": {
+				"fontStyle": "bold"
+			},
+			"variable": {
+				"fontStyle": "italic",
+			},
+			"parameter": {
+				"foreground": "#00b0ea",
+				"fontStyle": "italic bold"
+			},
+			"magicFunction": {
+				"foreground": "#ff0000"
+			},
+			"property": {
+				"fontStyle": "bold underline",
+				"foreground": "#2cac61",
+			}
+		}
+	},
+	"cSpell.words": [
+		"ADMA",
+		"ALCONTROL",
+		"ALERR",
+		"ALEVENTMASK",
+		"ALLBUTINITMASK",
+		"ALSTATUS",
+		"BITARR",
+		"BITSPOS",
+		"BYTESOFFSET",
+		"delayable",
+		"DLSTATUS",
+		"dnode",
+		"DTYPE",
+		"EEDATA",
+		"eeprom",
+		"emio",
+		"erpc",
+		"ERRACKMASK",
+		"ESCREG",
+		"etohs",
+		"fmmu",
+		"halfbridge",
+		"IBUS",
+		"INCLAIM",
+		"MBXBUFFERS",
+		"MBXSIZE",
+		"MBXSIZEBOOT",
+		"MMIO",
+		"mqtt",
+		"objd",
+		"OBJIDX",
+		"odlist",
+		"OUTREQ",
+		"puback",
+		"rsvd",
+		"rxpdo",
+		"safeoutput",
+		"sdhc",
+		"sdma",
+		"smact",
+		"SMENABLE",
+		"STATEMASK",
+		"SYNCTYPE",
+		"txpdo",
+		"UDINT",
+		"VBUS",
+		"zynq"
+	],
+}

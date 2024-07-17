@@ -1,0 +1,198 @@
+{
+	"editor.fontFamily": "'Monaspace Argon', 'Jetbrains Mono', 'Fira Code Retina', 'Monaspace Argon Var', 'Monaspace Radon Var', 'Monaspace Xenon', 'Monaspace Krypton', 'Cascadia Code', Consolas, 'Courier New', monospace",
+	"editor.fontSize": 17,
+	"editor.fontLigatures": "'calt','liga','dlig','ss01','ss02','ss03','ss04','ss05','ss06','ss07','ss08'",
+	"editor.inlayHints.enabled": "on",
+	"editor.inlayHints.fontFamily": "'Monaspace Radon Var', 'Monaspace Argon', 'Monaspace Xenon', 'Monaspace Krypton', 'Fira Code Retina', 'Jetbrains Mono', 'Cascadia Code', Consolas, 'Courier New', monospace",
+	"editor.inlineSuggest.enabled": true,
+	"editor.fontVariations": true,
+	"editor.linkedEditing": true,
+	"editor.formatOnSave": true,
+	"editor.stickyScroll.enabled": true,
+	"github.copilot.advanced": {
+		"enabled": true,
+		"showAdvancedSuggestions": true,
+		"showBasicSuggestions": true,
+		"showComments": true,
+		"showLiterals": true,
+		"showMethods": true,
+		"showSnippets": true,
+		"showVariables": true,
+		"showWords": true,
+	},
+	"github.copilot.enable": {
+		"*": true,
+		"plaintext": false,
+		"scminput": false
+	},
+	"clangd.checkUpdates": false,
+	"clangd.serverCompletionRanking": true,
+	"clangd.path": "/usr/bin/clangd-18",
+	"clangd.onConfigChanged": "restart",
+	"clangd.arguments": [
+		"--compile-commands-dir=${workspaceFolder}/build",
+		"--pch-storage=memory",
+		"--clang-tidy=true",
+		"--all-scopes-completion=true",
+		"--background-index=true",
+		"--inlay-hints=true",
+		"--pretty",
+	],
+	"editor.semanticHighlighting.enabled": true,
+	"editor.renderLineHighlight": "all",
+	"editor.renderWhitespace": "boundary",
+	"editor.minimap.renderCharacters": true,
+	"terminal.integrated.fontFamily": "'Hasklug NF', 'Monaspace Argon Var'",
+	"workbench.colorTheme": "Default Dark Modern",
+	"editor.semanticTokenColorCustomizations": {
+		"rules": {
+			"enum": {
+				"fontStyle": "bold"
+			},
+			"enumMember": {
+				"foreground": "#a0cd00",
+				"fontStyle": "italic bold",
+				"italic": true
+			},
+			"constant": {
+				"fontStyle": "bold underline",
+				"foreground": "#b9d1cc"
+			},
+			"constParameter": {
+				"fontStyle": "bold underline",
+				"foreground": "#b9d1cc"
+			},
+			"macro": {
+				"foreground": "#2cac61",
+				"fontStyle": "bold underline"
+			},
+			"function": {
+				"fontStyle": "bold"
+			},
+			"variable": {
+				"fontStyle": "italic",
+			},
+			"parameter": {
+				"foreground": "#00b0ea",
+				"fontStyle": "italic bold"
+			},
+			"magicFunction": {
+				"foreground": "#ff0000"
+			},
+			"property": {
+				"fontStyle": "italic underline",
+				"foreground": "#c943e1"
+			}
+		}
+	},
+	"cSpell.words": [
+		"ADMA",
+		"ALCONTROL",
+		"ALERR",
+		"ALEVENTMASK",
+		"ALLBUTINITMASK",
+		"ALSTATUS",
+		"BITARR",
+		"BITSPOS",
+		"BYTESOFFSET",
+		"delayable",
+		"DLSTATUS",
+		"dnode",
+		"DTYPE",
+		"EEDATA",
+		"eeprom",
+		"emio",
+		"erpc",
+		"ERRACKMASK",
+		"ESCREG",
+		"etohs",
+		"fmmu",
+		"halfbridge",
+		"IBUS",
+		"INCLAIM",
+		"MBXBUFFERS",
+		"MBXSIZE",
+		"MBXSIZEBOOT",
+		"MMIO",
+		"mqtt",
+		"objd",
+		"OBJIDX",
+		"odlist",
+		"OUTREQ",
+		"puback",
+		"rsvd",
+		"rxpdo",
+		"safeoutput",
+		"sdhc",
+		"sdma",
+		"smact",
+		"SMENABLE",
+		"STATEMASK",
+		"SYNCTYPE",
+		"txpdo",
+		"UDINT",
+		"VBUS",
+		"zynq"
+	],
+	"cmake.options.statusBarVisibility": "visible",
+	"cmake.options.advanced": {
+		"kit": {
+			"statusBarVisibility": "visible"
+		},
+		"build": {
+			"statusBarVisibility": "visible"
+		},
+		"launch": {
+			"statusBarVisibility": "visible"
+		},
+		"debug": {
+			"statusBarVisibility": "visible"
+		}
+	},
+	"files.associations": {
+		"*.cps": "javascript",
+		"array": "c",
+		"*.tcc": "c",
+		"bitset": "c",
+		"functional": "c",
+		"mutex": "c",
+		"tuple": "c",
+		"variant": "c",
+		"chrono": "c",
+		"__config": "c",
+		"__tuple": "c",
+		"ios": "c",
+		"span": "c",
+		"string": "c",
+		"string_view": "c",
+		"vector": "c",
+		"kernel.h": "c",
+		"init.h": "c",
+		"module.h": "c",
+		"virtio_dma_buf.h": "c",
+		"virtio_mmio.h": "c",
+		"virtio_input.h": "c",
+		"virtio_gpio.h": "c",
+		"virtio_console.h": "c",
+		"virtio.h": "c",
+		"virtio_i2c.h": "c",
+		"vringh.h": "c",
+		"virtio_ring.h": "c",
+		"virtio_config.h": "c",
+		"domain.h": "c",
+		"globals.h": "c",
+		"master.h": "c",
+		"*.inc": "c",
+		"configurator.h": "c",
+		"poll.h": "c",
+		"mqtt.h": "c",
+		"servo.h": "c",
+		"hash_function.h": "c",
+		"util_macro.h": "c",
+		"bit": "c",
+		"cmath": "c",
+		"random": "c",
+		"foc.h": "c",
+		"log.h": "c"
+	},
+}

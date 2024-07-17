@@ -1,0 +1,6 @@
+./**/obj
+bin
+obj
+obj_gen
+*.Generated.cs
+obj_list_gen.c

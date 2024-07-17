@@ -1,0 +1,12 @@
+<#@ output extension=".c" #>
+<#@ template language="C#" #>
+
+<# 
+	foreach(var obj in Objs) {
+		var idx_hex_str = $"{obj.Index:X4}";
+#>
+static const char obj_name_<#= idx_hex_str #>[] = "<#= obj.Name #>";
+<# 
+	} 
+#>
+
