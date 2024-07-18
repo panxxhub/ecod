@@ -1,6 +1,8 @@
 <#@ output extension=".c" #>
 <#@ template language="C#" #>
 
+#include "zephyr/drivers/ethercat.h"
+
 /**
  * @brief this file is Auto generated 
  * DO NOT EDIT IT !!!
