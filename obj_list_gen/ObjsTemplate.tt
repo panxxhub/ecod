@@ -7,11 +7,11 @@
  */
 
 <# 
-	foreach(var entry in ObjNames) {
-		var idx = $"{entry.Key:X4}";
-		var name = $"{entry.Value}";
+	foreach(var entry in FlattenedEntries) {
+		var name = $"{entry.Name}";
+		var id = $"{entry.NameIdentifier}";
 #>
-static const char obj_name_<#= idx #>[] = "<#= name #>";
+static const char <#= id #>[] = "<#= name #>";
 <# 
 	} 
 #>
@@ -24,7 +24,7 @@ const obj_desc_t sdo_<#= idx_str #>[] = {
 <#
 		foreach(var subEntry in obj) {
 #>
-	{ .subindex = <#= $"0x{subEntry.SubIndex:x4}" #>, .bitlength = <#= $"0x{subEntry.BitSize:x}" #>, .flags = <#= $"{subEntry.AccessType}"#>, .value = <#= $"0x{subEntry.Value:x8}" #>, },
+	{ .subindex = <#= $"0x{subEntry.SubIndex:x4}" #>, .bitlength = <#= $"0x{subEntry.BitSize:x2}" #>, .name = <#= $"{subEntry.NameIdentifier}" #>, .flags = <#= $"{subEntry.AccessType}"#>, .value = <#= $"0x{subEntry.Value:x8}" #>, },
 <#
 		}
 #>
@@ -33,4 +33,15 @@ const obj_desc_t sdo_<#= idx_str #>[] = {
 <#
 	}
 #>
- 
+
+const object_list_t sdo_obj_list[] = {
+<#
+	foreach(var obj in Objs) {
+		var idx_str = $"0x{obj.Index:x4}"; 
+		var obj_type = $"{obj.ObjectCodeDescription}";
+#>
+{.index= <#= idx_str #>, .objtype= <#= obj_type #>, .maxsub= <#= obj.MaxSub #> .name= <#= obj.NameId #> .objdesc= <#= obj.StructId #> },
+<#
+	}
+#>
+};

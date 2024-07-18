@@ -31,7 +31,7 @@
 	"editor.renderWhitespace": "boundary",
 	"editor.minimap.renderCharacters": true,
 	"terminal.integrated.fontFamily": "'Hasklug NF', 'Monaspace Argon Var'",
-	"workbench.colorTheme": "Default Dark Modern",
+	"workbench.colorTheme": "Default Light Modern",
 	"editor.semanticTokenColorCustomizations": {
 		"rules": {
 			"enum": {
@@ -51,7 +51,8 @@
 				"foreground": "#b9d1cc"
 			},
 			"function": {
-				"fontStyle": "bold"
+				"fontStyle": "italic bold",
+				"foreground": "#00ff99"
 			},
 			"variable": {
 				"fontStyle": "italic",
@@ -102,6 +103,7 @@
 		"objd",
 		"OBJIDX",
 		"odlist",
+		"OTYPE",
 		"OUTREQ",
 		"puback",
 		"rsvd",
