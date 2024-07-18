@@ -1,9 +1,28 @@
+using System.Collections;
 using System.ComponentModel;
 using EsiBase;
 using EsiCodeGen;
 using EsiInfo;
 
 namespace ObjListSourceGenerator;
+
+public class EsiRecords(string recordName, EsiDataType dataType)
+{
+	public string RecordName { get; } = recordName;
+	public EsiDataType DataType { get; } = dataType;
+	public IEnumerator SumItemDataNameIter()
+	{
+		foreach (var subItem in DataType.SubItems)
+		{
+			// convert the name to snake case(trim the space and replace space with underscore, convert to lower case)
+			var raw = subItem.Name;
+			var name = raw.Replace(" ", "_").ToLower();
+			yield return name;
+		}
+	}
+
+}
+public record EsiPredefinedRecord(string RecordTypeName, string Inst);
 
 public class EsiParseContext
 {
@@ -38,12 +57,27 @@ public class EsiParseContext
 		}
 	}
 
+	public static readonly Dictionary<int, EsiPredefinedRecord> RecordNames = new()
+	{
+		{0x1600, new EsiPredefinedRecord("pdo_mapping_t","rxpdo_mapping_0")},
+		{0x1601, new EsiPredefinedRecord("pdo_mapping_t","rxpdo_mapping_1")},
+		{0x1602, new EsiPredefinedRecord("pdo_mapping_t","rxpdo_mapping_2")},
+		{0x1603, new EsiPredefinedRecord("pdo_mapping_t","rxpdo_mapping_3")},
+
+		{0x1a00, new EsiPredefinedRecord("pdo_mapping_t","txpdo_mapping_0")},
+		{0x1a01, new EsiPredefinedRecord("pdo_mapping_t","txpdo_mapping_1")},
+		{0x1a02, new EsiPredefinedRecord("pdo_mapping_t","txpdo_mapping_2")},
+		{0x1a03, new EsiPredefinedRecord("pdo_mapping_t","txpdo_mapping_3")},
+
+		{0x1c32, new EsiPredefinedRecord("sm_sync_t","sm2_sync")},
+		{0x1c33, new EsiPredefinedRecord("sm_sync_t","sm3_sync")},
+	};
+	public Dictionary<int, EsiPredefinedRecord> EnabledRecordNames => RecordNames.Where(x => Objs.Any(y => y.Index == x.Key)).ToDictionary(x => x.Key, x => x.Value);
 	private readonly DeviceTypeProfile _profile;
 	public DeviceTypeProfile Raw => _profile;
 	public Dictionary<string, EsiDataType> DataTypes { get; } = [];
 	public List<EsiObj> Objs { get; } = [];
 	private readonly List<EsiFlattenedEntry> _flattenedEntries = [];
-
 	public ILookup<int, EsiFlattenedEntry> FlattenedEntriesLookup => _flattenedEntries.ToLookup(x => x.Index);
 	public List<EsiFlattenedEntry> FlattenedEntries => _flattenedEntries;
 
@@ -60,17 +94,6 @@ public enum CoeObjectCode
 	Record = 9,
 
 }
-// public static class CoeObjectCodeExtensions
-// {
-// 	// public static string GetDescription(this CoeObjectCode code)
-// 	// {
-// 	// 	var type = code.GetType();
-// 	// 	var memInfo = type.GetMember(code.ToString());
-// 	// 	var attributes = memInfo[0].GetCustomAttributes(typeof(DescriptionAttribute), false);
-// 	// 	return ((DescriptionAttribute)attributes[0]).Description;
-// 	// }
-// }
-
 public class EsiFlattenedEntry
 {
 	public EsiFlattenedEntry(EsiObj obj)
@@ -125,7 +148,6 @@ public class EsiObj
 	public EsiObj(ObjectType obj, EsiParseContext context)
 	{
 		_obj = obj;
-		var flag = obj.Flags.Access.Value == "ro" ? "ATYPE_RO" : "ATYPE_RW";
 
 		var dataType = obj.Type;
 		var esiDataType = context.DataTypes[dataType];
@@ -134,13 +156,13 @@ public class EsiObj
 		{
 			var item = obj.Info.SubItem[i];
 			var esiDataTypeSub = esiDataType.SubItems[i];
-			SubEntries.Add(new EsiObjSubEntry(item, i, esiDataTypeSub, flag));
+			SubEntries.Add(new EsiObjSubEntry(item, i, esiDataTypeSub));
 		}
 
 		var idx = ParseExtensions.ParseEsiHexCode(_obj.Index.Value);
 		Index = idx;
 		Name = obj.Name[0]?.Value ?? string.Empty;
-		AccessType = flag;
+		AccessType = (SubEntries.Count == 0) ? (obj.Flags.Access.Value == "ro" ? "ATYPE_RO" : "ATYPE_RW") : string.Empty;
 		Value = obj.Info.DefaultValue == null ? 0 : ParseExtensions.ParseEsiHexCode(obj.Info.DefaultValue);
 	}
 	public static readonly int[] RecordIndexes = [0x1018, 0x1600, 0x1601, 0x1602, 0x1603, 0x1A00, 0x1A01, 0x1A02, 0x1A03, 0x1c32, 0x1c33, 0x6048, 0x6049, 0x604A, 0x60C1, 0x60c2, 0x60c4];
@@ -178,7 +200,7 @@ public class EsiObj
 	public List<EsiObjSubEntry> SubEntries { get; } = [];
 	public string AccessType { get; }
 }
-public class EsiObjSubEntry(ObjectInfoTypeSubItem subItem, int idx, EsiDataTypeSubItem dataType, string accessType)
+public class EsiObjSubEntry(ObjectInfoTypeSubItem subItem, int idx, EsiDataTypeSubItem dataType)
 {
 	private readonly ObjectInfoTypeSubItem _subItem = subItem;
 	public ObjectInfoTypeSubItem Raw => _subItem;
@@ -186,34 +208,23 @@ public class EsiObjSubEntry(ObjectInfoTypeSubItem subItem, int idx, EsiDataTypeS
 	public string Name { get; } = subItem.Name;
 	public EsiDataTypeSubItem DataTypeSubItem { get; } = dataType;
 	public int BitSize => DataTypeSubItem.BitSize;
-	public string AccessType { get; } = accessType;
+	public string AccessType => DataTypeSubItem.Raw.Flags.Access.Value == "ro" ? "ATYPE_RO" : "ATYPE_RW";
 	public int Value { get; } = subItem.Info.DefaultValue == null ? 0 : ParseExtensions.ParseEsiHexCode(subItem.Info.DefaultValue);
 
 }
-public partial class ObjsTemplate(DeviceTypeProfile profile)
+public partial class SdoObjects(DeviceTypeProfile profile)
 {
 	private readonly EsiParseContext _context = new(profile);
 	public ILookup<int, EsiFlattenedEntry> FlattenedEntriesLookup => _context.FlattenedEntriesLookup;
 	public List<EsiFlattenedEntry> FlattenedEntries => _context.FlattenedEntries;
 	public List<EsiObj> Objs => _context.Objs;
-	// public void test()
-	// {
-	// 	foreach (var obj in FlattenedEntriesLookup)
-	// 	{
-	// 		foreach (var subEntry in obj)
-	// 		{
-	// 			// subEntry.
-	// 			// subEntry.Name
-	// 			// subEntry.BitSize
-	// 			// subEntry.AccessType
-	// 			// subEntry.Value
-	// 		}
-	// 		// obj.Key
-	// 		// obj.
+}
 
-	// 		// obj.Key
-	// 		// obj.Value
-	// 	}
-	// }
-
+public partial class SdoObjectsHeader(DeviceTypeProfile profile)
+{
+	private readonly EsiParseContext _context = new(profile);
+	public ILookup<int, EsiFlattenedEntry> FlattenedEntriesLookup => _context.FlattenedEntriesLookup;
+	public List<EsiFlattenedEntry> FlattenedEntries => _context.FlattenedEntries;
+	public List<EsiObj> Objs => _context.Objs;
+	public Dictionary<int, EsiPredefinedRecord> EnabledRecordNames => _context.EnabledRecordNames;
 }

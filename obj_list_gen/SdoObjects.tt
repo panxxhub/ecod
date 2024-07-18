@@ -1,8 +1,7 @@
 <#@ output extension=".c" #>
 <#@ template language="C#" #>
-
 #include "zephyr/drivers/ethercat.h"
-
+// clang-format off
 /**
  * @brief this file is Auto generated 
  * DO NOT EDIT IT !!!
@@ -17,6 +16,20 @@ static const char <#= id #>[] = "<#= name #>";
 <# 
 	} 
 #>
+
+<#
+	foreach(var obj in Objs) {
+		var maxSubNotEqZero = obj.MaxSub != 0;
+		if(maxSubNotEqZero) {
+			var id = $"{obj.NameId}";
+#>
+static const char  <#= id #>[] = "<#= obj.Name #>";
+<#
+		}
+	}
+#>
+
+
 
 <#
 	foreach(var obj in FlattenedEntriesLookup) {
@@ -36,14 +49,15 @@ const obj_desc_t sdo_<#= idx_str #>[] = {
 	}
 #>
 
-const object_list_t sdo_obj_list[] = {
+const object_list_t sdo_objects[] = {
 <#
 	foreach(var obj in Objs) {
 		var idx_str = $"0x{obj.Index:x4}"; 
 		var obj_type = $"{obj.ObjectCodeDescription}";
 #>
-{.index= <#= idx_str #>, .objtype= <#= obj_type #>, .maxsub= <#= obj.MaxSub #> .name= <#= obj.NameId #> .objdesc= <#= obj.StructId #> },
+	{ .index = <#= idx_str #>, .objtype = <#= obj_type #>, .maxsub = <#= obj.MaxSub #>, .name = <#= obj.NameId #>, .objdesc = <#= obj.StructId #> },
 <#
 	}
 #>
 };
+// clang-format on

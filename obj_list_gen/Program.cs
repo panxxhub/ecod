@@ -50,16 +50,17 @@ command.SetHandler((configFile, outputDirectory) =>
 	var device = ethercatInfo.Descriptions.Devices.FirstOrDefault(x => ParseExtensions.ParseEsiHexCode(x.Type.ProductCode) == config.DeviceCode) ?? throw new Exception($"Failed to Find {config.DeviceCode}");
 
 	var profile = device.Profile[config.ProfileIndex] ?? throw new Exception("Profile not found");
-	// profile.Dictionary.DataTypes
-	// profile.Dictionary
 
-	// var obj_list = profile.Dictionary.Objects.ToList();
-	var tt = new ObjsTemplate(profile);
+	var sdoObjects = new SdoObjects(profile);
+	var sdoObjectsHeader = new SdoObjectsHeader(profile);
 
-	var t_str = tt.TransformText();
+	var src_str = sdoObjects.TransformText();
+	var hdr_str = sdoObjectsHeader.TransformText();
 
 	var outputFilePath = Path.Combine(outputDirectory.FullName, "obj_list_gen.c");
-	File.WriteAllText(outputFilePath, t_str);
+	var outputHeaderFilePath = Path.Combine(outputDirectory.FullName, "obj_list_gen.h");
+	File.WriteAllText(outputFilePath, src_str);
+	File.WriteAllText(outputHeaderFilePath, hdr_str);
 
 
 
