@@ -31,6 +31,22 @@ public static partial class ParseExtensions
 
 		return descriptionAttributes.Length > 0 ? descriptionAttributes[0].Description : enumValue.ToString();
 	}
+	public static string CoeTypeToCType(this string coeType)
+	{
+		return coeType switch
+		{
+			"BOOL" => "bool",
+			"USINT" => "uint8_t",
+			"SINT" => "int8_t",
+			"UINT" => "uint16_t",
+			"INT" => "int16_t",
+			"UDINT" => "uint32_t",
+			"DINT" => "int32_t",
+			"ARRAY [0..15] OF BYTE" => "uint8_t[16]",
+			"STRING(2)" => "char[2]",
+			_ => throw new Exception("Invalid COE type")
+		};
+	}
 
 
 	[GeneratedRegex("#x[0-9|a-f|A-F]{1,}")]

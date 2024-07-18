@@ -7,6 +7,9 @@
  * DO NOT EDIT IT !!!
  */
 
+/******************************************************************************************
+ * PRE DEFINED STRINGS
+ *****************************************************************************************/
 <# 
 	foreach(var entry in FlattenedEntries) {
 		var name = $"{entry.Name}";
@@ -29,24 +32,52 @@ static const char  <#= id #>[] = "<#= obj.Name #>";
 	}
 #>
 
+/******************************************************************************************
+ * OBJECT DESCRIPTIONS
+ *****************************************************************************************/
 
-
 <#
-	foreach(var obj in FlattenedEntriesLookup) {
-		var idx_str = $"{obj.Key:x4}";
+	foreach(var item in Objs) {
+		var obj_code = item.ObjectCode;
+		switch(obj_code) {
+			case CoeObjectCode.Record: {
+					var inst_ref = EnabledRecordNames[item.Index].Inst;
+					var is_pdo = inst_ref.Contains("pdo");
 #>
-const obj_desc_t sdo_<#= idx_str #>[] = {
+const obj_dest_t <#= item.NameId #>[] = {
 <#
-		foreach(var subEntry in obj) {
+				for(int sub_idx=0; sub_idx<item.MaxSub; sub_idx++) {
+					var sub = item.SubEntries[sub_idx];
+					if(sub_idx == 0) {
 #>
-	{ .subindex = <#= $"0x{subEntry.SubIndex:x4}" #>, .bitlength = <#= $"0x{subEntry.BitSize:x2}" #>, .name = <#= $"{subEntry.NameIdentifier}" #>, .flags = <#= $"{subEntry.AccessType}"#>, .value = <#= $"0x{subEntry.Value:x8}" #>, },
+	{ .subindex = 0, .bitlength = <#= sub.BitSize #>, .name = <#= sub.Name #>, .value = <#= $"0x{sub.Value:x8}" #>   },
 <#
-		}
+					} else {
+						var my_ref = is_pdo? $"&{inst_ref}.pdo_mapped[{sub_idx-1}]" : $"&{inst_ref}.{sub.NameRef}";
+#>
+	{ .subindex = <#= sub.SubIndex #>, .bitlength = <#= sub.BitSize #>, .name = <#= sub.Name #> .value = NULL, .data = <#= my_ref #>},
+<#
+					} // end of if
+				} // end of for
 #>
 };
-
 <#
-	}
+				break;
+			} // end of case CoeObjectCode.Record
+			case CoeObjectCode.Var: {
+#>
+const obj_dest_t <#= item.NameId #>[]= {
+	{ .subindex = 0, .bitlength = <#= item.BitSize #>, .name = <#= item.Name #> },
+};
+<#
+
+				break;
+			}	 // end of case CoeObjectCode.Var
+			case CoeObjectCode.Array: {
+				break;
+			} 	// end of case CoeObjectCode.Array
+		} // end of switch
+	} // end of foreach
 #>
 
 const object_list_t sdo_objects[] = {
@@ -60,4 +91,20 @@ const object_list_t sdo_objects[] = {
 	}
 #>
 };
+
+/******************************************************************************************
+ * PRE-DEFINED RECORDS
+ *****************************************************************************************/
+<#
+	foreach(var kv in EnabledRecordNames) {
+		var enabledEntry = kv.Value; 
+		var recordTypeName = enabledEntry.RecordTypeName;
+		var inst = enabledEntry.Inst;
+#>
+const <#= recordTypeName #>  <#= inst #>;
+<#
+	}
+#>
+
 // clang-format on
+

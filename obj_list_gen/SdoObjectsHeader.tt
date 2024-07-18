@@ -84,11 +84,58 @@ typedef struct obj_list {
 #define ATYPE_RWop       (ATYPE_Wop | ATYPE_RO)
 #define ATYPE_RWpre_safe (ATYPE_Wpre | ATYPE_Wsafe | ATYPE_RO)
 
+/******************************************************************************************
+ *  Object Definitions
+ *****************************************************************************************/
 <#
-
+	 foreach(var item in NPredefinedEsiRecords) {
+	  	var inst_name = item.RecordName;
 #>
-typedef struct 
-<##>
+typedef struct <#= inst_name #> {
+<#
+		foreach(var sub in item.SubItems) {
+#>
+	<#= sub.CType #> <#= sub.SnakeCaseName #>;
+<#
+	}
+#>
+} <#= inst_name #>_t;
+
+<#
+	}
+#>
+
+typedef struct identity_object {
+	uint32_t vendor_id;
+	uint32_t product_code;
+	uint32_t revision_number;
+	uint32_t serial_number;
+} identity_object_t;
+
+typedef struct analog_servo_parameters {
+	int32_t analog_input_gain;
+	int16_t analog_input_polarity;
+	int32_t analog_input_integration_time_constant;
+	int32_t analog_input_integration_limit;
+	int16_t analog_input_offset;
+	int16_t analog_input_filter;
+	int16_t analog_input_excess_setup;
+} analog_servo_parameters_t;
+
+typedef struct interpolation_time_period {
+	uint8_t interpolation_time_period_value;
+	int8_t interpolation_time_index;
+} interpolation_time_period_t;
+
+
+typedef char diagnosis_msg[16];
+typedef struct diagnosis_history {
+	uint8_t newest_msg;
+	uint8_t newest_ack_msg
+	bool newest_msg_avail;
+	uint16_t flags;
+	diagnosis_msg msg_group[14];
+} diagnosis_history_t;
 
 typedef struct pdo_mapping {
 	uint8_t number_of_entries;
