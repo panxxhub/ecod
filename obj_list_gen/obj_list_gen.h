@@ -113,15 +113,18 @@ typedef struct interpolation_time_period {
 
 typedef char diagnosis_msg[16];
 typedef struct diagnosis_history {
-	uint8_t newest_msg;
-	uint8_t newest_ack_msg
-	bool newest_msg_avail;
+	uint8_t maximum_messages;
+	uint8_t newest_message;
+	uint8_t newest_acknowledged_message;
+	bool  newest_messages_available;
 	uint16_t flags;
+
 	diagnosis_msg msg_group[14];
 } diagnosis_history_t;
 
 typedef struct pdo_mapping {
 	uint8_t number_of_entries;
+
 	uint32_t pdo_mapped[32];
 } pdo_mapping_t;
 

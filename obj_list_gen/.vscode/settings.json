@@ -1,5 +1,5 @@
 {
-	"editor.fontFamily": "'Jetbrains Mono', 'Monaspace Argon', 'Fira Code Retina', 'Monaspace Argon Var', 'Monaspace Radon Var', 'Monaspace Xenon', 'Monaspace Krypton', 'Cascadia Code', Consolas, 'Courier New', monospace",
+	"editor.fontFamily": "'Monaspace Argon', 'Jetbrains Mono', 'Fira Code Retina', 'Monaspace Argon Var', 'Monaspace Radon Var', 'Monaspace Xenon', 'Monaspace Krypton', 'Cascadia Code', Consolas, 'Courier New', monospace",
 	"editor.fontSize": 17,
 	"editor.fontLigatures": "'calt','liga','dlig','ss01','ss02','ss03','ss04','ss05','ss06','ss07','ss08'",
 	"editor.inlayHints.enabled": "on",
@@ -35,6 +35,7 @@
 	"workbench.colorTheme": "Default Light Modern",
 	"editor.semanticTokenColorCustomizations": {
 		"rules": {
+			"bitwise": "#55ff00",
 			"enum": {
 				"fontStyle": "bold"
 			},
@@ -56,7 +57,8 @@
 				"foreground": "#00ff99"
 			},
 			"variable": {
-				"fontStyle": "italic",
+				"fontStyle": "italic bold",
+				"foreground": "#0084ff"
 			},
 			"parameter": {
 				"foreground": "#00b0ea",
@@ -78,6 +80,7 @@
 		"ALEVENTMASK",
 		"ALLBUTINITMASK",
 		"ALSTATUS",
+		"ATYPE",
 		"BITARR",
 		"BITSPOS",
 		"BYTESOFFSET",

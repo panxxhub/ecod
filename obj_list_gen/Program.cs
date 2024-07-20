@@ -51,8 +51,8 @@ command.SetHandler((configFile, outputDirectory) =>
 
 	var profile = device.Profile[config.ProfileIndex] ?? throw new Exception("Profile not found");
 
-	var sdoObjects = new SdoObjects(profile);
-	var sdoObjectsHeader = new SdoObjectsHeader(profile);
+	var sdoObjects = new SdoObjects(profile, config.ConstIndexes);
+	var sdoObjectsHeader = new SdoObjectsHeader(profile, config.ConstIndexes);
 
 	var src_str = sdoObjects.TransformText();
 	var hdr_str = sdoObjectsHeader.TransformText();

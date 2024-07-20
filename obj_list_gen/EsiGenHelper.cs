@@ -15,9 +15,11 @@ public record EsiPredefinedRecord(string RecordTypeName, string Inst);
 
 public class EsiParseContext
 {
-	public EsiParseContext(DeviceTypeProfile profile)
+	public List<int> ConstIndexes { get; }
+	public EsiParseContext(DeviceTypeProfile profile, List<int> constIndexes)
 	{
 		_profile = profile;
+		ConstIndexes = constIndexes;
 
 		foreach (var dataType in profile.Dictionary.DataTypes)
 		{
@@ -29,19 +31,19 @@ public class EsiParseContext
 			Objs.Add(new EsiObj(obj, this));
 		}
 
+		var idx = 0;
 		foreach (var obj in Objs)
 		{
-			var hasSubEntries = obj.SubEntries.Count != 0;
-			if (!hasSubEntries)
+			var inst_name = $"str_{idx:x4}";
+			var obj_str_content = obj.Name;
+			EsiStringContentToInstName.TryAdd(obj_str_content, inst_name);
+			idx++;
+			foreach (var sub in obj.SubEntries)
 			{
-				_flattenedEntries.Add(new EsiFlattenedEntry(obj));
-			}
-			else
-			{
-				foreach (var subEntry in obj.SubEntries)
-				{
-					_flattenedEntries.Add(new EsiFlattenedEntry(obj, subEntry));
-				}
+				var sub_inst_name = $"str_{idx:x4}";
+				var sub_str_content = sub.Name;
+				EsiStringContentToInstName.TryAdd(sub_str_content, sub_inst_name);
+				idx++;
 			}
 		}
 	}
@@ -70,15 +72,12 @@ public class EsiParseContext
 	public DeviceTypeProfile Raw => _profile;
 	public Dictionary<string, EsiDataType> DataTypes { get; } = [];
 	public List<EsiObj> Objs { get; } = [];
-	private readonly List<EsiFlattenedEntry> _flattenedEntries = [];
-	public ILookup<int, EsiFlattenedEntry> FlattenedEntriesLookup => _flattenedEntries.ToLookup(x => x.Index);
-	public List<EsiFlattenedEntry> FlattenedEntries => _flattenedEntries;
 	public List<EsiRecords> NPredefinedEsiRecords =>
 		Objs.Where(x => (x.ObjectCode == CoeObjectCode.Record) & (!RecordNames.ContainsKey(x.Index)))
 			.Select(x => new EsiRecords(x.Name
 			, DataTypes[x.DataTypeName])).ToList();
 
-
+	public Dictionary<string, string> EsiStringContentToInstName { get; } = [];
 }
 public enum CoeObjectCode
 {
@@ -223,21 +222,21 @@ public class EsiObjSubEntry(ObjectInfoTypeSubItem subItem, int subIdx, EsiDataTy
 	public int Value { get; } = subItem.Info.DefaultValue == null ? 0 : ParseExtensions.ParseEsiHexCode(subItem.Info.DefaultValue);
 
 }
-public partial class SdoObjects(DeviceTypeProfile profile)
+public partial class SdoObjects(DeviceTypeProfile profile, List<int> constIndexes)
 {
-	private readonly EsiParseContext _context = new(profile);
-	public ILookup<int, EsiFlattenedEntry> FlattenedEntriesLookup => _context.FlattenedEntriesLookup;
-	public List<EsiFlattenedEntry> FlattenedEntries => _context.FlattenedEntries;
+	private readonly EsiParseContext _context = new(profile, constIndexes);
 	public List<EsiObj> Objs => _context.Objs;
 	public Dictionary<int, EsiPredefinedRecord> EnabledRecordNames => _context.EnabledRecordNames;
+	public Dictionary<string, string> EsiStringContentToInstName => _context.EsiStringContentToInstName;
+	public string NameToInst(string name) => _context.EsiStringContentToInstName[name];
 }
 
-public partial class SdoObjectsHeader(DeviceTypeProfile profile)
+public partial class SdoObjectsHeader(DeviceTypeProfile profile, List<int> constIndexes)
 {
-	private readonly EsiParseContext _context = new(profile);
-	public ILookup<int, EsiFlattenedEntry> FlattenedEntriesLookup => _context.FlattenedEntriesLookup;
-	public List<EsiFlattenedEntry> FlattenedEntries => _context.FlattenedEntries;
+	private readonly EsiParseContext _context = new(profile, constIndexes);
 	public List<EsiObj> Objs => _context.Objs;
 	public Dictionary<int, EsiPredefinedRecord> EnabledRecordNames => _context.EnabledRecordNames;
 	public List<EsiRecords> NPredefinedEsiRecords => _context.NPredefinedEsiRecords;
+	public Dictionary<string, string> EsiStringContentToInstName => _context.EsiStringContentToInstName;
+
 }

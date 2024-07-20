@@ -11,25 +11,14 @@
  * PRE DEFINED STRINGS
  *****************************************************************************************/
 <# 
-	foreach(var entry in FlattenedEntries) {
-		var name = $"{entry.Name}";
-		var id = $"{entry.NameIdentifier}";
-#>
-static const char <#= id #>[] = "<#= name #>";
-<# 
-	} 
-#>
 
-<#
-	foreach(var obj in Objs) {
-		var maxSubNotEqZero = obj.MaxSub != 0;
-		if(maxSubNotEqZero) {
-			var id = $"{obj.NameId}";
+	foreach(var entry in EsiStringContentToInstName) {
+		var str_conent = $"{entry.Key}";
+		var inst = $"{entry.Value}";
 #>
-static const char  <#= id #>[] = "<#= obj.Name #>";
-<#
-		}
-	}
+static const char <#= inst #>[] = "<#= str_conent #>";
+<# 
+} 
 #>
 
 /******************************************************************************************
@@ -44,18 +33,18 @@ static const char  <#= id #>[] = "<#= obj.Name #>";
 					var inst_ref = EnabledRecordNames[item.Index].Inst;
 					var is_pdo = inst_ref.Contains("pdo");
 #>
-const obj_dest_t <#= item.NameId #>[] = {
+const obj_desc_t <#= item.StructId #>[] = {
 <#
 				for(int sub_idx=0; sub_idx<item.MaxSub; sub_idx++) {
 					var sub = item.SubEntries[sub_idx];
 					if(sub_idx == 0) {
 #>
-	{ .subindex = 0, .bitlength = <#= sub.BitSize #>, .name = <#= sub.Name #>, .value = <#= $"0x{sub.Value:x8}" #>   },
+	{ .subindex = 0, .bitlength = <#= sub.BitSize #>, .name = <#= NameToInst(sub.Name) #>, .value = <#= $"0x{sub.Value:x8}" #>   },
 <#
 					} else {
 						var my_ref = is_pdo? $"&{inst_ref}.pdo_mapped[{sub_idx-1}]" : $"&{inst_ref}.{sub.NameRef}";
 #>
-	{ .subindex = <#= sub.SubIndex #>, .bitlength = <#= sub.BitSize #>, .name = <#= sub.Name #> .value = NULL, .data = <#= my_ref #>},
+	{ .subindex = <#= sub.SubIndex #>, .bitlength = <#= sub.BitSize #>, .name = <#= NameToInst(sub.Name) #>, .value = 0, .data = <#= my_ref #>},
 <#
 					} // end of if
 				} // end of for
@@ -66,8 +55,8 @@ const obj_dest_t <#= item.NameId #>[] = {
 			} // end of case CoeObjectCode.Record
 			case CoeObjectCode.Var: {
 #>
-const obj_dest_t <#= item.NameId #>[]= {
-	{ .subindex = 0, .bitlength = <#= item.BitSize #>, .name = <#= item.Name #> },
+const obj_desc_t <#= item.StructId #>[]= {
+	{ .subindex = 0, .bitlength = <#= item.BitSize #>, .name = <#= NameToInst(item.Name) #> },
 };
 <#
 
