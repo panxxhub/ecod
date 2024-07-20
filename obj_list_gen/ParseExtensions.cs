@@ -11,12 +11,9 @@ public static partial class ParseExtensions
 		if (hexPattern.IsMatch(hexCode))
 		{
 			hexCode = hexCode[2..];
+			return int.Parse(hexCode, System.Globalization.NumberStyles.HexNumber);
 		}
-		else
-		{
-			throw new Exception("Invalid product code");
-		}
-		return int.Parse(hexCode, System.Globalization.NumberStyles.HexNumber);
+		throw new Exception("Invalid product code");
 	}
 	public static bool IsEsiCustomDataType(this string dataType)
 	{

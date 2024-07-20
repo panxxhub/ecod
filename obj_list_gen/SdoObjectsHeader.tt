@@ -1,6 +1,12 @@
 #ifndef __ZEPHYR_SDO_OBJECTS_H__
 #define __ZEPHYR_SDO_OBJECTS_H__
 
+/******************************************************************************************
+ * THIS FILE IS AUTO GENERATED 
+ * GENERATED AT <#= $"{DateTime.Now:yyyy-MM-dd HH:mm:ss}" #>
+ * !!! DO NOT EDIT IT !!!
+ *****************************************************************************************/
+
 #include <stdint.h>
 
 typedef struct obj_desc {
@@ -87,86 +93,78 @@ typedef struct obj_list {
 /******************************************************************************************
  *  Object Definitions
  *****************************************************************************************/
-<#
-	 foreach(var item in NPredefinedEsiRecords) {
-	  	var inst_name = item.RecordName;
+<# 	// sdo object var
+	foreach(var item in Ctx.SdoObjVarToExpose) {
+		var typeDef = item.TypeDef;
 #>
-typedef struct <#= inst_name #> {
+typedef <#= typeDef #>; 
 <#
-		foreach(var sub in item.SubItems) {
-#>
-	<#= sub.CType #> <#= sub.SnakeCaseName #>;
-<#
-	}
-#>
-} <#= inst_name #>_t;
-
-<#
-	}
+}
 #>
 
-typedef struct analog_servo_parameters {
-	int32_t analog_input_gain;
-	int16_t analog_input_polarity;
-	int32_t analog_input_integration_time_constant;
-	int32_t analog_input_integration_limit;
-	int16_t analog_input_offset;
-	int16_t analog_input_filter;
-	int16_t analog_input_excess_setup;
-} analog_servo_parameters_t;
+<# 	// sdo object record
+	foreach(var item in Ctx.SdoObjRecordToExpose) {
+		var type_def = item.TypeName;
+		var struct_name = item.StructName;
+#>
+typedef struct <#= struct_name #> {
+<#
+		foreach(var e in item.Entries) {
+			if(e.DataRef == "NULL")
+				continue;
+			var type_entry = e.RecordTypeEntry;
+#>
+  <#= type_entry #>;
+<#
+		} // end of foreach(var e in item.Entries)
+#>
+} <#= type_def #>;
 
-typedef struct interpolation_time_period {
-	uint8_t interpolation_time_period_value;
-	int8_t interpolation_time_index;
-} interpolation_time_period_t;
+<#
+	} // end of foreach(var item in Ctx.SdoObjRecordToExpose)
+#>
+
+<#
+	foreach(var item in Ctx.SdoObjArrayToExpose) {
+		var type_def = item.TypeName;
+		var struct_name = item.StructName;
+#>
+typedef struct <#= struct_name #> {
+<#
+		var entriesCount = item.Entries.Count;
+		for(int sub_idx = 0; sub_idx < entriesCount; sub_idx++) {
+			if(sub_idx==0 && item.Entries[sub_idx].DataRef == "NULL") {
+				continue;
+			} 
+			if(sub_idx>1) {
+				continue;
+			}
+			var type_entry = sub_idx==0 ? item.Entries[sub_idx].RecordTypeEntry : $"{item.Entries[sub_idx].ArrayTypeEntry}[{entriesCount-1}]";
+#>
+  <#= type_entry #>;
+<#
+		} // end of for(int sub_idx = 0; sub_idx < item.Entries.Count; sub_idx++)
+#>
+} <#= type_def #>;
+
+<#
+	} // end of foreach(var item in Ctx.SdoObjArrayToExpose)
+#>
 
 
-typedef char diagnosis_msg[16];
-typedef struct diagnosis_history {
-	uint8_t maximum_messages;
-	uint8_t newest_message;
-	uint8_t newest_acknowledged_message;
-	bool  newest_messages_available;
-	uint16_t flags;
-
-	diagnosis_msg msg_group[14];
-} diagnosis_history_t;
-
-typedef struct pdo_mapping {
-	uint8_t number_of_entries;
-
-	uint32_t pdo_mapped[32];
-} pdo_mapping_t;
-
-typedef struct sm_sync {
-	uint8_t sync_mode;
-	uint32_t cycle_time;
-	uint32_t shift_time;
-	uint16_t sync_modes_supported;
-	uint32_t min_cycle_time;
-	uint32_t calc_and_copy_time;
-	uint16_t command;
-	uint32_t delay_time;
-	uint32_t sync0_cycle_time;
-	uint16_t cycle_time_too_small;
-	uint16_t sm_event_missed;
-	uint16_t shift_time_too_short;
-	uint16_t rxpdo_toggle_failed;
-	bool sync_error;
-} sm_sync_t;
 
 /******************************************************************************************
  *  Object list(s) for the SDO server
  *****************************************************************************************/
 extern const obj_list_t sdo_objects[];
 <#
-	foreach(var kv in EnabledRecordNames) {
-		var enabledEntry = kv.Value; 
-		var recordTypeName = enabledEntry.RecordTypeName;
-		var inst = enabledEntry.Inst;
+	foreach(var item in Ctx.SdoObjectsToExpose) {
+		var type_name = item.TypeName;
+		var inst = item.InstId;
 #>
-extern const <#= recordTypeName #>  <#= inst #>;
+extern const <#= type_name #> <#= inst #>;
 <#
-	}
+	} // end of foreach(var item in Ctx.SdoObjectsToExpose)
 #>
+
 #endif // __ZEPHYR_SDO_OBJECTS_H__

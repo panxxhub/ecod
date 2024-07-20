@@ -2,98 +2,53 @@
 <#@ template language="C#" #>
 #include "zephyr/drivers/ethercat.h"
 // clang-format off
-/**
- * @brief this file is Auto generated 
- * DO NOT EDIT IT !!!
- */
+
+/******************************************************************************************
+ * THIS FILE IS AUTO GENERATED 
+ * GENERATED AT <#= $"{DateTime.Now:yyyy-MM-dd HH:mm:ss}" #>
+ * !!! DO NOT EDIT IT !!!
+ *****************************************************************************************/
+
+
 
 /******************************************************************************************
  * PRE DEFINED STRINGS
  *****************************************************************************************/
-<# 
-
-	foreach(var entry in EsiStringContentToInstName) {
-		var str_conent = $"{entry.Key}";
-		var inst = $"{entry.Value}";
+<#
+	foreach(var item in Ctx.IndexedNames) {
+		var key = item.Key;
+		var value = item.Value;
+		var inst_name = $"str_inst_{value:x4}";
 #>
-static const char <#= inst #>[] = "<#= str_conent #>";
-<# 
-} 
+static const char <#= inst_name #>[] = "<#= key #>";
+<#
+	}
 #>
 
 /******************************************************************************************
  * OBJECT DESCRIPTIONS
  *****************************************************************************************/
-
+ 
 <#
-	foreach(var item in Objs) {
-		var obj_code = item.ObjectCode;
-		switch(obj_code) {
-			case CoeObjectCode.Record: {
-					var inst_ref = EnabledRecordNames[item.Index].Inst;
-					var is_pdo = inst_ref.Contains("pdo");
+	foreach(var obj in Ctx.SdoObjects) {
+		var entries = obj.GetEntries();
 #>
-const obj_desc_t <#= item.StructId #>[] = {
+const obj_desc_t <#= obj.SdoInstName #>[] = {
 <#
-				for(int sub_idx=0; sub_idx<item.MaxSub; sub_idx++) {
-					var sub = item.SubEntries[sub_idx];
-					if(sub_idx == 0) {
+		foreach(var e in entries) {
 #>
-	{ .subindex = 0, .bitlength = <#= sub.BitSize #>, .name = <#= NameToInst(sub.Name) #>, .value = <#= $"0x{sub.Value:x8}" #>   },
+	{ .subindex = <#= $"0x{e.SubIdx:x2}" #>, .datatype= <#= e.CANOpenDataType #>, .bitlength = <#= $"0x{e.BitSize:x2}" #>, .name = <#= e.StrInstName #>, .flags = <#= e.AccessType #>, .value = <#= $"0x{e.Value:x8}" #>, .data = <#= e.DataRef #>   },
 <#
-					} else {
-						var my_ref = is_pdo? $"&{inst_ref}.pdo_mapped[{sub_idx-1}]" : $"&{inst_ref}.{sub.NameRef}";
-#>
-	{ .subindex = <#= sub.SubIndex #>, .bitlength = <#= sub.BitSize #>, .name = <#= NameToInst(sub.Name) #>, .value = 0, .data = <#= my_ref #>},
-<#
-					} // end of if
-				} // end of for
+		} // end of foreach(var e in entries)
 #>
 };
 <#
-				break;
-			} // end of case CoeObjectCode.Record
-			case CoeObjectCode.Var: {
+	} // end of foreach(var obj in Ctx.SdoObjects)
 #>
-const obj_desc_t <#= item.StructId #>[]= {
-	{ .subindex = 0, .bitlength = <#= item.BitSize #>, .name = <#= NameToInst(item.Name) #> },
-};
-<#
-
-				break;
-			}	 // end of case CoeObjectCode.Var
-			case CoeObjectCode.Array: {
-				break;
-			} 	// end of case CoeObjectCode.Array
-		} // end of switch
-	} // end of foreach
-#>
-
-const object_list_t sdo_objects[] = {
-<#
-	foreach(var obj in Objs) {
-		var idx_str = $"0x{obj.Index:x4}"; 
-		var obj_type = $"{obj.ObjectCodeDescription}";
-#>
-	{ .index = <#= idx_str #>, .objtype = <#= obj_type #>, .maxsub = <#= obj.MaxSub #>, .name = <#= obj.NameId #>, .objdesc = <#= obj.StructId #> },
-<#
-	}
-#>
-};
 
 /******************************************************************************************
  * PRE-DEFINED RECORDS
  *****************************************************************************************/
-<#
-	foreach(var kv in EnabledRecordNames) {
-		var enabledEntry = kv.Value; 
-		var recordTypeName = enabledEntry.RecordTypeName;
-		var inst = enabledEntry.Inst;
-#>
-const <#= recordTypeName #>  <#= inst #>;
-<#
-	}
-#>
 
 // clang-format on
 

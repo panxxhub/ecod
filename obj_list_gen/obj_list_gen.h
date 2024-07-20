@@ -1,6 +1,12 @@
 #ifndef __ZEPHYR_SDO_OBJECTS_H__
 #define __ZEPHYR_SDO_OBJECTS_H__
 
+/******************************************************************************************
+ * THIS FILE IS AUTO GENERATED 
+ * GENERATED AT 2024-07-20 21:48:17
+ * !!! DO NOT EDIT IT !!!
+ *****************************************************************************************/
+
 #include <stdint.h>
 
 typedef struct obj_desc {
@@ -87,80 +93,400 @@ typedef struct obj_list {
 /******************************************************************************************
  *  Object Definitions
  *****************************************************************************************/
+typedef int16_t hysteresis_at_torque_control_switching_t; 
+typedef int16_t x_1st_damping_frequency_t; 
+typedef int16_t x_2nd_damping_filter_setup_t; 
+typedef int32_t positioning_complete_in_position_range_t; 
+typedef int16_t function_expansion_setup_2_t; 
+typedef int16_t tuning_filter_t; 
+typedef char drive_serial_number_t[10]; 
 
-typedef struct identity_object {
-	uint32_t vendor_id;
-	uint32_t product_code;
-	uint32_t revision_number;
-	uint32_t serial_number;
-} identity_object_t;
-
-typedef struct analog_servo_parameters {
-	int32_t analog_input_gain;
-	int16_t analog_input_polarity;
-	int32_t analog_input_integration_time_constant;
-	int32_t analog_input_integration_limit;
-	int16_t analog_input_offset;
-	int16_t analog_input_filter;
-	int16_t analog_input_excess_setup;
-} analog_servo_parameters_t;
-
-typedef struct interpolation_time_period {
-	uint8_t interpolation_time_period_value;
-	int8_t interpolation_time_index;
-} interpolation_time_period_t;
-
-
-typedef char diagnosis_msg[16];
 typedef struct diagnosis_history {
-	uint8_t maximum_messages;
-	uint8_t newest_message;
-	uint8_t newest_acknowledged_message;
-	bool  newest_messages_available;
-	uint16_t flags;
-
-	diagnosis_msg msg_group[14];
+  uint8_t maximum_messages;
+  uint8_t newest_message;
+  uint8_t newest_acknowledged_message;
+  bool new_messages_available;
+  uint16_t flags;
+  char diagnosis_message_1[16];
+  char diagnosis_message_2[16];
+  char diagnosis_message_3[16];
+  char diagnosis_message_4[16];
+  char diagnosis_message_5[16];
+  char diagnosis_message_6[16];
+  char diagnosis_message_7[16];
+  char diagnosis_message_8[16];
+  char diagnosis_message_9[16];
+  char diagnosis_message_10[16];
+  char diagnosis_message_11[16];
+  char diagnosis_message_12[16];
+  char diagnosis_message_13[16];
+  char diagnosis_message_14[16];
 } diagnosis_history_t;
 
-typedef struct pdo_mapping {
-	uint8_t number_of_entries;
+typedef struct receive_pdo_mapping_1 {
+  uint8_t number_of_entries;
+  uint32_t x_1st_receive_pdo_mapped;
+  uint32_t x_2nd_receive_pdo_mapped;
+  uint32_t x_3rd_receive_pdo_mapped;
+  uint32_t x_4th_receive_pdo_mapped;
+  uint32_t x_5th_receive_pdo_mapped;
+  uint32_t x_6th_receive_pdo_mapped;
+  uint32_t x_7th_receive_pdo_mapped;
+  uint32_t x_8th_receive_pdo_mapped;
+  uint32_t x_9th_receive_pdo_mapped;
+  uint32_t x_10th_receive_pdo_mapped;
+  uint32_t x_11th_receive_pdo_mapped;
+  uint32_t x_12th_receive_pdo_mapped;
+  uint32_t x_13th_receive_pdo_mapped;
+  uint32_t x_14th_receive_pdo_mapped;
+  uint32_t x_15th_receive_pdo_mapped;
+  uint32_t x_16th_receive_pdo_mapped;
+  uint32_t x_17th_receive_pdo_mapped;
+  uint32_t x_18th_receive_pdo_mapped;
+  uint32_t x_19th_receive_pdo_mapped;
+  uint32_t x_20th_receive_pdo_mapped;
+  uint32_t x_21st_receive_pdo_mapped;
+  uint32_t x_22nd_receive_pdo_mapped;
+  uint32_t x_23rd_receive_pdo_mapped;
+  uint32_t x_24th_receive_pdo_mapped;
+  uint32_t x_25th_receive_pdo_mapped;
+  uint32_t x_26th_receive_pdo_mapped;
+  uint32_t x_27th_receive_pdo_mapped;
+  uint32_t x_28th_receive_pdo_mapped;
+  uint32_t x_29th_receive_pdo_mapped;
+  uint32_t x_30th_receive_pdo_mapped;
+  uint32_t x_31st_receive_pdo_mapped;
+  uint32_t x_32nd_receive_pdo_mapped;
+} receive_pdo_mapping_1_t;
 
-	uint32_t pdo_mapped[32];
-} pdo_mapping_t;
+typedef struct receive_pdo_mapping_2 {
+  uint8_t number_of_entries;
+  uint32_t x_1st_receive_pdo_mapped;
+  uint32_t x_2nd_receive_pdo_mapped;
+  uint32_t x_3rd_receive_pdo_mapped;
+  uint32_t x_4th_receive_pdo_mapped;
+  uint32_t x_5th_receive_pdo_mapped;
+  uint32_t x_6th_receive_pdo_mapped;
+  uint32_t x_7th_receive_pdo_mapped;
+  uint32_t x_8th_receive_pdo_mapped;
+  uint32_t x_9th_receive_pdo_mapped;
+  uint32_t x_10th_receive_pdo_mapped;
+  uint32_t x_11th_receive_pdo_mapped;
+  uint32_t x_12th_receive_pdo_mapped;
+  uint32_t x_13th_receive_pdo_mapped;
+  uint32_t x_14th_receive_pdo_mapped;
+  uint32_t x_15th_receive_pdo_mapped;
+  uint32_t x_16th_receive_pdo_mapped;
+  uint32_t x_17th_receive_pdo_mapped;
+  uint32_t x_18th_receive_pdo_mapped;
+  uint32_t x_19th_receive_pdo_mapped;
+  uint32_t x_20th_receive_pdo_mapped;
+  uint32_t x_21st_receive_pdo_mapped;
+  uint32_t x_22nd_receive_pdo_mapped;
+  uint32_t x_23rd_receive_pdo_mapped;
+  uint32_t x_24th_receive_pdo_mapped;
+  uint32_t x_25th_receive_pdo_mapped;
+  uint32_t x_26th_receive_pdo_mapped;
+  uint32_t x_27th_receive_pdo_mapped;
+  uint32_t x_28th_receive_pdo_mapped;
+  uint32_t x_29th_receive_pdo_mapped;
+  uint32_t x_30th_receive_pdo_mapped;
+  uint32_t x_31st_receive_pdo_mapped;
+  uint32_t x_32nd_receive_pdo_mapped;
+} receive_pdo_mapping_2_t;
 
-typedef struct sm_sync {
-	uint8_t sync_mode;
-	uint32_t cycle_time;
-	uint32_t shift_time;
-	uint16_t sync_modes_supported;
-	uint32_t min_cycle_time;
-	uint32_t calc_and_copy_time;
-	uint16_t command;
-	uint32_t delay_time;
-	uint32_t sync0_cycle_time;
-	uint16_t cycle_time_too_small;
-	uint16_t sm_event_missed;
-	uint16_t shift_time_too_short;
-	uint16_t rxpdo_toggle_failed;
-	bool sync_error;
-} sm_sync_t;
+typedef struct receive_pdo_mapping_3 {
+  uint8_t number_of_entries;
+  uint32_t x_1st_receive_pdo_mapped;
+  uint32_t x_2nd_receive_pdo_mapped;
+  uint32_t x_3rd_receive_pdo_mapped;
+  uint32_t x_4th_receive_pdo_mapped;
+  uint32_t x_5th_receive_pdo_mapped;
+  uint32_t x_6th_receive_pdo_mapped;
+  uint32_t x_7th_receive_pdo_mapped;
+  uint32_t x_8th_receive_pdo_mapped;
+  uint32_t x_9th_receive_pdo_mapped;
+  uint32_t x_10th_receive_pdo_mapped;
+  uint32_t x_11th_receive_pdo_mapped;
+  uint32_t x_12th_receive_pdo_mapped;
+  uint32_t x_13th_receive_pdo_mapped;
+  uint32_t x_14th_receive_pdo_mapped;
+  uint32_t x_15th_receive_pdo_mapped;
+  uint32_t x_16th_receive_pdo_mapped;
+  uint32_t x_17th_receive_pdo_mapped;
+  uint32_t x_18th_receive_pdo_mapped;
+  uint32_t x_19th_receive_pdo_mapped;
+  uint32_t x_20th_receive_pdo_mapped;
+  uint32_t x_21st_receive_pdo_mapped;
+  uint32_t x_22nd_receive_pdo_mapped;
+  uint32_t x_23rd_receive_pdo_mapped;
+  uint32_t x_24th_receive_pdo_mapped;
+  uint32_t x_25th_receive_pdo_mapped;
+  uint32_t x_26th_receive_pdo_mapped;
+  uint32_t x_27th_receive_pdo_mapped;
+  uint32_t x_28th_receive_pdo_mapped;
+  uint32_t x_29th_receive_pdo_mapped;
+  uint32_t x_30th_receive_pdo_mapped;
+  uint32_t x_31st_receive_pdo_mapped;
+  uint32_t x_32nd_receive_pdo_mapped;
+} receive_pdo_mapping_3_t;
+
+typedef struct receive_pdo_mapping_4 {
+  uint8_t number_of_entries;
+  uint32_t x_1st_receive_pdo_mapped;
+  uint32_t x_2nd_receive_pdo_mapped;
+  uint32_t x_3rd_receive_pdo_mapped;
+  uint32_t x_4th_receive_pdo_mapped;
+  uint32_t x_5th_receive_pdo_mapped;
+  uint32_t x_6th_receive_pdo_mapped;
+  uint32_t x_7th_receive_pdo_mapped;
+  uint32_t x_8th_receive_pdo_mapped;
+  uint32_t x_9th_receive_pdo_mapped;
+  uint32_t x_10th_receive_pdo_mapped;
+  uint32_t x_11th_receive_pdo_mapped;
+  uint32_t x_12th_receive_pdo_mapped;
+  uint32_t x_13th_receive_pdo_mapped;
+  uint32_t x_14th_receive_pdo_mapped;
+  uint32_t x_15th_receive_pdo_mapped;
+  uint32_t x_16th_receive_pdo_mapped;
+  uint32_t x_17th_receive_pdo_mapped;
+  uint32_t x_18th_receive_pdo_mapped;
+  uint32_t x_19th_receive_pdo_mapped;
+  uint32_t x_20th_receive_pdo_mapped;
+  uint32_t x_21st_receive_pdo_mapped;
+  uint32_t x_22nd_receive_pdo_mapped;
+  uint32_t x_23rd_receive_pdo_mapped;
+  uint32_t x_24th_receive_pdo_mapped;
+  uint32_t x_25th_receive_pdo_mapped;
+  uint32_t x_26th_receive_pdo_mapped;
+  uint32_t x_27th_receive_pdo_mapped;
+  uint32_t x_28th_receive_pdo_mapped;
+  uint32_t x_29th_receive_pdo_mapped;
+  uint32_t x_30th_receive_pdo_mapped;
+  uint32_t x_31st_receive_pdo_mapped;
+  uint32_t x_32nd_receive_pdo_mapped;
+} receive_pdo_mapping_4_t;
+
+typedef struct transmit_pdo_mapping_1 {
+  uint8_t number_of_entries;
+  uint32_t x_1st_transmit_pdo_mapped;
+  uint32_t x_2nd_transmit_pdo_mapped;
+  uint32_t x_3rd_transmit_pdo_mapped;
+  uint32_t x_4th_transmit_pdo_mapped;
+  uint32_t x_5th_transmit_pdo_mapped;
+  uint32_t x_6th_transmit_pdo_mapped;
+  uint32_t x_7th_transmit_pdo_mapped;
+  uint32_t x_8th_transmit_pdo_mapped;
+  uint32_t x_9th_transmit_pdo_mapped;
+  uint32_t x_10th_transmit_pdo_mapped;
+  uint32_t x_11th_transmit_pdo_mapped;
+  uint32_t x_12th_transmit_pdo_mapped;
+  uint32_t x_13th_transmit_pdo_mapped;
+  uint32_t x_14th_transmit_pdo_mapped;
+  uint32_t x_15th_transmit_pdo_mapped;
+  uint32_t x_16th_transmit_pdo_mapped;
+  uint32_t x_17th_transmit_pdo_mapped;
+  uint32_t x_18th_transmit_pdo_mapped;
+  uint32_t x_19th_transmit_pdo_mapped;
+  uint32_t x_20th_transmit_pdo_mapped;
+  uint32_t x_21st_transmit_pdo_mapped;
+  uint32_t x_22nd_transmit_pdo_mapped;
+  uint32_t x_23rd_transmit_pdo_mapped;
+  uint32_t x_24th_transmit_pdo_mapped;
+  uint32_t x_25th_transmit_pdo_mapped;
+  uint32_t x_26th_transmit_pdo_mapped;
+  uint32_t x_27th_transmit_pdo_mapped;
+  uint32_t x_28th_transmit_pdo_mapped;
+  uint32_t x_29th_transmit_pdo_mapped;
+  uint32_t x_30th_transmit_pdo_mapped;
+  uint32_t x_31st_transmit_pdo_mapped;
+  uint32_t x_32nd_transmit_pdo_mapped;
+} transmit_pdo_mapping_1_t;
+
+typedef struct transmit_pdo_mapping_2 {
+  uint8_t number_of_entries;
+  uint32_t x_1st_transmit_pdo_mapped;
+  uint32_t x_2nd_transmit_pdo_mapped;
+  uint32_t x_3rd_transmit_pdo_mapped;
+  uint32_t x_4th_transmit_pdo_mapped;
+  uint32_t x_5th_transmit_pdo_mapped;
+  uint32_t x_6th_transmit_pdo_mapped;
+  uint32_t x_7th_transmit_pdo_mapped;
+  uint32_t x_8th_transmit_pdo_mapped;
+  uint32_t x_9th_transmit_pdo_mapped;
+  uint32_t x_10th_transmit_pdo_mapped;
+  uint32_t x_11th_transmit_pdo_mapped;
+  uint32_t x_12th_transmit_pdo_mapped;
+  uint32_t x_13th_transmit_pdo_mapped;
+  uint32_t x_14th_transmit_pdo_mapped;
+  uint32_t x_15th_transmit_pdo_mapped;
+  uint32_t x_16th_transmit_pdo_mapped;
+  uint32_t x_17th_transmit_pdo_mapped;
+  uint32_t x_18th_transmit_pdo_mapped;
+  uint32_t x_19th_transmit_pdo_mapped;
+  uint32_t x_20th_transmit_pdo_mapped;
+  uint32_t x_21st_transmit_pdo_mapped;
+  uint32_t x_22nd_transmit_pdo_mapped;
+  uint32_t x_23rd_transmit_pdo_mapped;
+  uint32_t x_24th_transmit_pdo_mapped;
+  uint32_t x_25th_transmit_pdo_mapped;
+  uint32_t x_26th_transmit_pdo_mapped;
+  uint32_t x_27th_transmit_pdo_mapped;
+  uint32_t x_28th_transmit_pdo_mapped;
+  uint32_t x_29th_transmit_pdo_mapped;
+  uint32_t x_30th_transmit_pdo_mapped;
+  uint32_t x_31st_transmit_pdo_mapped;
+  uint32_t x_32nd_transmit_pdo_mapped;
+} transmit_pdo_mapping_2_t;
+
+typedef struct transmit_pdo_mapping_3 {
+  uint8_t number_of_entries;
+  uint32_t x_1st_transmit_pdo_mapped;
+  uint32_t x_2nd_transmit_pdo_mapped;
+  uint32_t x_3rd_transmit_pdo_mapped;
+  uint32_t x_4th_transmit_pdo_mapped;
+  uint32_t x_5th_transmit_pdo_mapped;
+  uint32_t x_6th_transmit_pdo_mapped;
+  uint32_t x_7th_transmit_pdo_mapped;
+  uint32_t x_8th_transmit_pdo_mapped;
+  uint32_t x_9th_transmit_pdo_mapped;
+  uint32_t x_10th_transmit_pdo_mapped;
+  uint32_t x_11th_transmit_pdo_mapped;
+  uint32_t x_12th_transmit_pdo_mapped;
+  uint32_t x_13th_transmit_pdo_mapped;
+  uint32_t x_14th_transmit_pdo_mapped;
+  uint32_t x_15th_transmit_pdo_mapped;
+  uint32_t x_16th_transmit_pdo_mapped;
+  uint32_t x_17th_transmit_pdo_mapped;
+  uint32_t x_18th_transmit_pdo_mapped;
+  uint32_t x_19th_transmit_pdo_mapped;
+  uint32_t x_20th_transmit_pdo_mapped;
+  uint32_t x_21st_transmit_pdo_mapped;
+  uint32_t x_22nd_transmit_pdo_mapped;
+  uint32_t x_23rd_transmit_pdo_mapped;
+  uint32_t x_24th_transmit_pdo_mapped;
+  uint32_t x_25th_transmit_pdo_mapped;
+  uint32_t x_26th_transmit_pdo_mapped;
+  uint32_t x_27th_transmit_pdo_mapped;
+  uint32_t x_28th_transmit_pdo_mapped;
+  uint32_t x_29th_transmit_pdo_mapped;
+  uint32_t x_30th_transmit_pdo_mapped;
+  uint32_t x_31st_transmit_pdo_mapped;
+  uint32_t x_32nd_transmit_pdo_mapped;
+} transmit_pdo_mapping_3_t;
+
+typedef struct transmit_pdo_mapping_4 {
+  uint8_t number_of_entries;
+  uint32_t x_1st_transmit_pdo_mapped;
+  uint32_t x_2nd_transmit_pdo_mapped;
+  uint32_t x_3rd_transmit_pdo_mapped;
+  uint32_t x_4th_transmit_pdo_mapped;
+  uint32_t x_5th_transmit_pdo_mapped;
+  uint32_t x_6th_transmit_pdo_mapped;
+  uint32_t x_7th_transmit_pdo_mapped;
+  uint32_t x_8th_transmit_pdo_mapped;
+  uint32_t x_9th_transmit_pdo_mapped;
+  uint32_t x_10th_transmit_pdo_mapped;
+  uint32_t x_11th_transmit_pdo_mapped;
+  uint32_t x_12th_transmit_pdo_mapped;
+  uint32_t x_13th_transmit_pdo_mapped;
+  uint32_t x_14th_transmit_pdo_mapped;
+  uint32_t x_15th_transmit_pdo_mapped;
+  uint32_t x_16th_transmit_pdo_mapped;
+  uint32_t x_17th_transmit_pdo_mapped;
+  uint32_t x_18th_transmit_pdo_mapped;
+  uint32_t x_19th_transmit_pdo_mapped;
+  uint32_t x_20th_transmit_pdo_mapped;
+  uint32_t x_21st_transmit_pdo_mapped;
+  uint32_t x_22nd_transmit_pdo_mapped;
+  uint32_t x_23rd_transmit_pdo_mapped;
+  uint32_t x_24th_transmit_pdo_mapped;
+  uint32_t x_25th_transmit_pdo_mapped;
+  uint32_t x_26th_transmit_pdo_mapped;
+  uint32_t x_27th_transmit_pdo_mapped;
+  uint32_t x_28th_transmit_pdo_mapped;
+  uint32_t x_29th_transmit_pdo_mapped;
+  uint32_t x_30th_transmit_pdo_mapped;
+  uint32_t x_31st_transmit_pdo_mapped;
+  uint32_t x_32nd_transmit_pdo_mapped;
+} transmit_pdo_mapping_4_t;
+
+typedef struct sync_manager_2_synchronization {
+  uint16_t sync_mode;
+  uint32_t cycle_time;
+  uint32_t shift_time;
+  uint16_t sync_modes_supported;
+  uint32_t minimum_cycle_time;
+  uint32_t calc_and_copy_time;
+  uint16_t command;
+  uint32_t delay_time;
+  uint32_t sync0_cycle_time;
+  uint16_t cycle_time_too_small;
+  uint16_t sm_event_missed;
+  uint16_t shift_time_too_short;
+  uint16_t rxpdo_toggle_failed;
+  bool sync_error;
+} sync_manager_2_synchronization_t;
+
+typedef struct sync_manager_3_synchronization {
+  uint16_t sync_mode;
+  uint32_t cycle_time;
+  uint32_t shift_time;
+  uint16_t sync_modes_supported;
+  uint32_t minimum_cycle_time;
+  uint32_t calc_and_copy_time;
+  uint16_t command;
+  uint32_t delay_time;
+  uint32_t sync0_cycle_time;
+  uint16_t cycle_time_too_small;
+  uint16_t sm_event_missed;
+  uint16_t shift_time_too_short;
+  uint16_t rxpdo_toggle_failed;
+  bool sync_error;
+} sync_manager_3_synchronization_t;
+
+
+typedef struct store_parameters {
+  uint32_t element[1];
+} store_parameters_t;
+
+typedef struct sync_manager_channel_2 {
+  uint8_t number_of_assigned_pdos;
+  uint16_t element[4];
+} sync_manager_channel_2_t;
+
+typedef struct sync_manager_channel_3 {
+  uint8_t number_of_assigned_pdos;
+  uint16_t element[4];
+} sync_manager_channel_3_t;
+
+
+
 
 /******************************************************************************************
  *  Object list(s) for the SDO server
  *****************************************************************************************/
 extern const obj_list_t sdo_objects[];
-extern const pdo_mapping_t  rxpdo_mapping_0;
-extern const pdo_mapping_t  rxpdo_mapping_1;
-extern const pdo_mapping_t  rxpdo_mapping_2;
-extern const pdo_mapping_t  rxpdo_mapping_3;
-extern const pdo_mapping_t  txpdo_mapping_0;
-extern const pdo_mapping_t  txpdo_mapping_1;
-extern const pdo_mapping_t  txpdo_mapping_2;
-extern const pdo_mapping_t  txpdo_mapping_3;
-extern const sm_sync_t  sm2_sync;
-extern const sm_sync_t  sm3_sync;
-extern const identity_object_t  identity;
-extern const diagnosis_history_t  diagnosis_history;
-extern const analog_servo_parameters_t  analog_servo_parameters;
-extern const interpolation_time_period_t  interpolation_time_period;
+extern const store_parameters_t store_parameters;
+extern const diagnosis_history_t diagnosis_history;
+extern const receive_pdo_mapping_1_t receive_pdo_mapping_1;
+extern const receive_pdo_mapping_2_t receive_pdo_mapping_2;
+extern const receive_pdo_mapping_3_t receive_pdo_mapping_3;
+extern const receive_pdo_mapping_4_t receive_pdo_mapping_4;
+extern const transmit_pdo_mapping_1_t transmit_pdo_mapping_1;
+extern const transmit_pdo_mapping_2_t transmit_pdo_mapping_2;
+extern const transmit_pdo_mapping_3_t transmit_pdo_mapping_3;
+extern const transmit_pdo_mapping_4_t transmit_pdo_mapping_4;
+extern const sync_manager_channel_2_t sync_manager_channel_2;
+extern const sync_manager_channel_3_t sync_manager_channel_3;
+extern const sync_manager_2_synchronization_t sync_manager_2_synchronization;
+extern const sync_manager_3_synchronization_t sync_manager_3_synchronization;
+extern const hysteresis_at_torque_control_switching_t hysteresis_at_torque_control_switching;
+extern const x_1st_damping_frequency_t x_1st_damping_frequency;
+extern const x_2nd_damping_filter_setup_t x_2nd_damping_filter_setup;
+extern const positioning_complete_in_position_range_t positioning_complete_in_position_range;
+extern const function_expansion_setup_2_t function_expansion_setup_2;
+extern const tuning_filter_t tuning_filter;
+extern const drive_serial_number_t drive_serial_number;
+
 #endif // __ZEPHYR_SDO_OBJECTS_H__

@@ -2,7 +2,6 @@
 using System.Xml.Serialization;
 using EsiCodeGen;
 using EsiInfo;
-using ObjListSourceGenerator;
 using YamlDotNet.Serialization;
 using YamlDotNet.Serialization.NamingConventions;
 
@@ -51,8 +50,11 @@ command.SetHandler((configFile, outputDirectory) =>
 
 	var profile = device.Profile[config.ProfileIndex] ?? throw new Exception("Profile not found");
 
-	var sdoObjects = new SdoObjects(profile, config.ConstIndexes);
-	var sdoObjectsHeader = new SdoObjectsHeader(profile, config.ConstIndexes);
+	var factory = new EsiGen2ContextFactory(Profile: profile, config);
+
+	var ctx = factory.Create();
+	var sdoObjects = new SdoObjects(ctx);
+	var sdoObjectsHeader = new SdoObjectsHeader(ctx);
 
 	var src_str = sdoObjects.TransformText();
 	var hdr_str = sdoObjectsHeader.TransformText();

@@ -7,7 +7,7 @@
 			"type": "process",
 			"args": [
 				"build",
-				"${workspaceFolder}/ObjListSourceGenerator.csproj"
+				"${workspaceFolder}/EsiCodeGen.csproj"
 			],
 			"problemMatcher": "$msCompile"
 		}
