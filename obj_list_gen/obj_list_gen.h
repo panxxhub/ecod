@@ -3,7 +3,7 @@
 
 /******************************************************************************************
  * THIS FILE IS AUTO GENERATED 
- * GENERATED AT 2024-07-20 22:12:18
+ * GENERATED AT 2024-07-20 22:37:48
  * !!! DO NOT EDIT IT !!!
  *****************************************************************************************/
 
@@ -508,5 +508,72 @@ extern const tuning_filter_t tuning_filter;
 extern const drive_serial_number_t drive_serial_number;
 extern const alarm_accessory_information_t alarm_accessory_information;
 extern const digital_outputs_t digital_outputs;
+
+/******************************************************************************************
+ * SDO_OBJECTS HELPERS
+ *****************************************************************************************/
+#define SDO_OBJECTS_COUNT 		645
+#define SOD_OBJECTS_COUNT_LOG2UP	10
+
+/** Search for an object index matching the wanted value in the Object List.
+ * Search in a binary-search fashion.
+ * @param[in] index   = value on index of object we want to locate
+ * @return local array index if we succeed, -1 if we didn't find the index.
+ */
+static ALWAYS_INLINE int32_t sdo_find_object(uint16_t index)
+{
+#define SDO_BINARY_SEARCH_LOW_INIT  0
+#define SDO_BINARY_SEARCH_MID_INIT  322
+#define SDO_BINARY_SEARCH_HIGH_INIT 644
+	int low =  SDO_BINARY_SEARCH_LOW_INIT;
+	int high = SDO_BINARY_SEARCH_HIGH_INIT;
+	int mid =  SDO_BINARY_SEARCH_MID_INIT;
+	for(int iter = 0; iter < SOD_OBJECTS_COUNT_LOG2UP; iter++) {
+		if (sdo_objects[mid].index == index) {
+			return mid;
+		} else if (sdo_objects[mid].index < index) {
+			low = mid + 1;
+		} else {
+			high = mid - 1;
+		}
+		mid = (low + high) / 2;
+	}
+	return -1;
+}
+
+/** Search for an object sub-index.
+ *
+ * @param[in] nidx   = local array index of object we want to find sub-index to
+ * @param[in] subindex   = value on sub-index of object we want to locate
+ * @return local array index if we succeed, -1 if we didn't find the index.
+ */
+static ALWAYS_INLINE int16_t sdo_find_subindex(int32_t nidx, uint8_t subindex)
+{
+	const obj_desc_t *objd;
+	int16_t n = sdo_find_object(nidx);
+	if(n < 0) {
+		return -1;
+	}
+	int16_t max_sub = sdo_objects[n].maxsub;
+	int low = 0;
+	int high = max_sub - 1;
+	int mid = (low + high) / 2;
+	for(int iter = 0; iter < 6; iter++) {
+		objd = sdo_objects[n].objdesc[mid];
+		if (objd->subindex == subindex) {
+			return mid;
+		} else if (objd->subindex < subindex) {
+			low = mid + 1;
+		} else {
+			high = mid - 1;
+		}
+		mid = (low + high) / 2;
+	}
+	return -1;
+}
+
+
+
+
 
 #endif // __ZEPHYR_SDO_OBJECTS_H__

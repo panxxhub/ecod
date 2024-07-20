@@ -433,6 +433,8 @@ public class EsiGen2Context(List<DataTypeType> dataTypes, List<SdoObjBase> sdoOb
 {
 	public List<DataTypeType> DataTypes { get; } = dataTypes;
 	public List<SdoObjBase> SdoObjects { get; } = sdoObjects;
+	public int SdoObjectsCount => SdoObjects.Count;
+	public int SdoObjectsCountLog2Up => (int)Math.Ceiling(Math.Log2(SdoObjects.Count));
 	public Dictionary<string, int> IndexedNames { get; } = indexedNames;
 	public List<SdoObjBase> SdoObjectsToExpose => SdoObjects.Where(x => x.Expose).ToList();
 	public List<SdoObjVar> SdoObjVarToExpose => SdoObjectsToExpose.OfType<SdoObjVar>().ToList();
