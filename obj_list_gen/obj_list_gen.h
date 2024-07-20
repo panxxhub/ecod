@@ -3,7 +3,7 @@
 
 /******************************************************************************************
  * THIS FILE IS AUTO GENERATED 
- * GENERATED AT 2024-07-20 21:48:17
+ * GENERATED AT 2024-07-20 22:12:18
  * !!! DO NOT EDIT IT !!!
  *****************************************************************************************/
 
@@ -100,6 +100,13 @@ typedef int32_t positioning_complete_in_position_range_t;
 typedef int16_t function_expansion_setup_2_t; 
 typedef int16_t tuning_filter_t; 
 typedef char drive_serial_number_t[10]; 
+
+typedef struct identity_object {
+  uint32_t vendor_id;
+  uint32_t product_code;
+  uint32_t revision_number;
+  uint32_t serial_number;
+} identity_object_t;
 
 typedef struct diagnosis_history {
   uint8_t maximum_messages;
@@ -460,6 +467,16 @@ typedef struct sync_manager_channel_3 {
   uint16_t element[4];
 } sync_manager_channel_3_t;
 
+typedef struct alarm_accessory_information {
+  uint8_t number_of_entries;
+  uint8_t element[36];
+} alarm_accessory_information_t;
+
+typedef struct digital_outputs {
+  uint8_t number_of_entries;
+  uint32_t element[2];
+} digital_outputs_t;
+
 
 
 
@@ -468,6 +485,7 @@ typedef struct sync_manager_channel_3 {
  *****************************************************************************************/
 extern const obj_list_t sdo_objects[];
 extern const store_parameters_t store_parameters;
+extern const identity_object_t identity_object;
 extern const diagnosis_history_t diagnosis_history;
 extern const receive_pdo_mapping_1_t receive_pdo_mapping_1;
 extern const receive_pdo_mapping_2_t receive_pdo_mapping_2;
@@ -488,5 +506,7 @@ extern const positioning_complete_in_position_range_t positioning_complete_in_po
 extern const function_expansion_setup_2_t function_expansion_setup_2;
 extern const tuning_filter_t tuning_filter;
 extern const drive_serial_number_t drive_serial_number;
+extern const alarm_accessory_information_t alarm_accessory_information;
+extern const digital_outputs_t digital_outputs;
 
 #endif // __ZEPHYR_SDO_OBJECTS_H__

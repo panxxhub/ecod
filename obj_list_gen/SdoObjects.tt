@@ -49,6 +49,16 @@ const obj_desc_t <#= obj.SdoInstName #>[] = {
 /******************************************************************************************
  * PRE-DEFINED RECORDS
  *****************************************************************************************/
+const obj_list_t sdo_objects[] = {
+<#
+	foreach(var item in Ctx.SdoObjects) {
+
+#>
+  { .index = <#= $"0x{item.Index:x4}" #>, .objtype = <#= item.ObjectType #>, .maxsub = <#= item.MaxSubIndex #>, .pad1 = 0, .name = <#= item.StrInstName #>, .objdesc = sdo_<#= $"{item.Index:x4}"#> },
+<#
+	} // end of foreach(var item in Ctx.SdoObjects)
+#>
+};
 
 // clang-format on
 

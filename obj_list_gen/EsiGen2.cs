@@ -144,21 +144,23 @@ public record SdoEntry(uint Id, uint Addr32, string CANOpenDataType, int BitSize
 	public string ArrayTypeEntry => EsiHelperExtensions.ToCTypeDef(CANOpenDataType, "element", BitSize / 8);
 }
 
-public abstract class SdoObjBase(int index, bool expose, bool non_volatile, string name)
+public abstract class SdoObjBase(int index, bool expose, bool non_volatile, string name, string str_inst_name)
 {
 	public int Index { get; } = index;
 	public string SdoInstName => $"sdo_{Index:x4}";
 	public bool Expose { get; } = expose;
 	public bool NonVolatile { get; } = non_volatile;
 	public string Name { get; } = name;
+	public string StrInstName { get; } = str_inst_name;
 	public string TypeName => $"{Name.ToInstName()}_t";
 	public string StructName => $"{Name.ToInstName()}";
 	public string InstId => $"{Name.ToInstName()}";
-
 	public abstract List<SdoEntry> GetEntries();
+	public abstract string ObjectType { get; }
+	public abstract int MaxSubIndex { get; }
 
 }
-public class SdoObjVar(int index, bool expose, bool non_volatile, string name, SdoEntry entry) : SdoObjBase(index, expose, non_volatile, name)
+public class SdoObjVar(int index, bool expose, bool non_volatile, string name, string str_inst_name, SdoEntry entry) : SdoObjBase(index, expose, non_volatile, name, str_inst_name)
 {
 	public SdoEntry Entry { get; } = entry;
 
@@ -168,9 +170,13 @@ public class SdoObjVar(int index, bool expose, bool non_volatile, string name, S
 	{
 		return [Entry];
 	}
+
+	public override string ObjectType => "OTYPE_VAR";
+
+	public override int MaxSubIndex => 0;
 }
 
-public class SdoObjArray(int index, bool expose, bool non_volatile, string name, List<SdoEntry> entries) : SdoObjBase(index, expose, non_volatile, name)
+public class SdoObjArray(int index, bool expose, bool non_volatile, string name, string str_inst_name, List<SdoEntry> entries) : SdoObjBase(index, expose, non_volatile, name, str_inst_name)
 {
 	public List<SdoEntry> Entries { get; } = entries;
 
@@ -180,9 +186,13 @@ public class SdoObjArray(int index, bool expose, bool non_volatile, string name,
 	}
 
 
+
+	public override string ObjectType => "OTYPE_ARRAY";
+
+	public override int MaxSubIndex => Entries.Count - 1;
 }
 
-public class SdoObjRecord(int index, bool expose, bool non_volatile, string name, List<SdoEntry> entries) : SdoObjBase(index, expose, non_volatile, name)
+public class SdoObjRecord(int index, bool expose, bool non_volatile, string name, string str_inst_name, List<SdoEntry> entries) : SdoObjBase(index, expose, non_volatile, name, str_inst_name)
 {
 	public string InstName => Expose ? Name.ToInstName() : string.Empty;
 	public List<SdoEntry> Entries { get; } = entries;
@@ -191,6 +201,11 @@ public class SdoObjRecord(int index, bool expose, bool non_volatile, string name
 	{
 		return Entries;
 	}
+
+
+	public override string ObjectType => "OTYPE_RECORD";
+
+	public override int MaxSubIndex => Entries.Count - 1;
 }
 
 public class EsiGen2ContextFactory(DeviceTypeProfile Profile, GeneratorConfig GenConfig)
@@ -304,8 +319,8 @@ public class EsiGen2ContextFactory(DeviceTypeProfile Profile, GeneratorConfig Ge
 							Value: obj.Info.DefaultValue == null ? 0 : ParseExtensions.ParseEsiHexCode(obj.Info.DefaultValue),
 							DataRef: data_ref,
 							Name: name);
-
-						var sdoObj = new SdoObjVar(sdoIdx, expose, non_volatile, name, entry);
+						var sdo_obj_str_inst_name = GetInstName(indexedNames, name);
+						var sdoObj = new SdoObjVar(sdoIdx, expose, non_volatile, name, sdo_obj_str_inst_name, entry);
 						sdoObjects.Add(sdoObj);
 						addr += offset;
 						break;
@@ -349,7 +364,9 @@ public class EsiGen2ContextFactory(DeviceTypeProfile Profile, GeneratorConfig Ge
 
 							addr += offset;
 						}
-						var sdoObj = new SdoObjRecord(sdoIdx, expose, non_volatile, obj.Name[0].Value, subEntries);
+						var sdo_obj_str_inst_name = GetInstName(indexedNames, obj.Name[0].Value);
+						var sdoObj = new SdoObjRecord(sdoIdx, expose, non_volatile, obj.Name[0].Value, sdo_obj_str_inst_name, subEntries);
+
 						sdoObjects.Add(sdoObj);
 
 						break;
@@ -393,7 +410,9 @@ public class EsiGen2ContextFactory(DeviceTypeProfile Profile, GeneratorConfig Ge
 							subEntries.Add(subEntry);
 							addr += offset;
 						}
-						var sdoObj = new SdoObjArray(sdoIdx, expose, non_volatile, obj.Name[0].Value, subEntries);
+						var sdo_obj_str_inst_name = GetInstName(indexedNames, obj.Name[0].Value);
+						var sdoObj = new SdoObjArray(sdoIdx, expose, non_volatile, obj.Name[0].Value, sdo_obj_str_inst_name, subEntries);
+
 						sdoObjects.Add(sdoObj);
 
 						break;
