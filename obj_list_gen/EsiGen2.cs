@@ -142,6 +142,22 @@ public record SdoEntry(uint Id, uint Addr32, string CANOpenDataType, int BitSize
 	public int SubIdx => (int)(Id & 0xFFFF);
 	public string RecordTypeEntry => EsiHelperExtensions.ToCTypeDef(CANOpenDataType, Name.ToInstName(), BitSize / 8);
 	public string ArrayTypeEntry => EsiHelperExtensions.ToCTypeDef(CANOpenDataType, "element", BitSize / 8);
+	public string InstName => Name.ToInstName();
+	public string InitValue => CANOpenDataType switch
+	{
+		"DTYPE_BOOL" => Value == 0 ? "false" : "true",
+		"DTYPE_UNSIGNED8" => Value == 0 ? "0x0" : $"0x{Value:x2}",
+		"DTYPE_INTEGER8" => Value == 0 ? "0x0" : $"0x{Value:x2}",
+		"DTYPE_UNSIGNED16" => Value == 0 ? "0x0" : $"0x{Value:x4}",
+		"DTYPE_INTEGER16" => Value == 0 ? "0x0" : $"0x{Value:x4}",
+		"DTYPE_UNSIGNED32" => Value == 0 ? "0x0" : $"0x{Value:x8}",
+		"DTYPE_INTEGER32" => Value == 0 ? "0x0" : $"0x{Value:x8}",
+		// "DTYPE_OCTET_STRING" => $"{{{string.Join(", ", Enumerable.Repeat("0", BitSize / 8))}}}",
+		"DTYPE_OCTET_STRING" => "{0}",
+		// "DTYPE_VISIBLE_STRING" => $"{{{string.Join(", ", Enumerable.Repeat("0", BitSize / 8))}}}",
+		"DTYPE_VISIBLE_STRING" => "{0}",
+		_ => $"0x{Value:x}"
+	};
 }
 
 public abstract class SdoObjBase(int index, bool expose, bool non_volatile, string name, string str_inst_name)
@@ -433,6 +449,11 @@ public class EsiGen2Context(List<DataTypeType> dataTypes, List<SdoObjBase> sdoOb
 {
 	public List<DataTypeType> DataTypes { get; } = dataTypes;
 	public List<SdoObjBase> SdoObjects { get; } = sdoObjects;
+	public List<SdoObjBase> SdoObjectsNonVolatile => SdoObjects.Where(x => x.NonVolatile | x.Expose).ToList();
+	public List<SdoObjVar> SdoObjVarNonVolatile => SdoObjectsNonVolatile.OfType<SdoObjVar>().ToList();
+	public List<SdoObjArray> SdoObjArrayNonVolatile => SdoObjectsNonVolatile.OfType<SdoObjArray>().ToList();
+	public List<SdoObjRecord> SdoObjRecordNonVolatile => SdoObjectsNonVolatile.OfType<SdoObjRecord>().ToList();
+
 	public int SdoObjectsCount => SdoObjects.Count;
 	public int SdoObjectsCountLog2Up => (int)Math.Ceiling(Math.Log2(SdoObjects.Count));
 	public Dictionary<string, int> IndexedNames { get; } = indexedNames;
@@ -440,6 +461,12 @@ public class EsiGen2Context(List<DataTypeType> dataTypes, List<SdoObjBase> sdoOb
 	public List<SdoObjVar> SdoObjVarToExpose => SdoObjectsToExpose.OfType<SdoObjVar>().ToList();
 	public List<SdoObjArray> SdoObjArrayToExpose => SdoObjectsToExpose.OfType<SdoObjArray>().ToList();
 	public List<SdoObjRecord> SdoObjRecordToExpose => SdoObjectsToExpose.OfType<SdoObjRecord>().ToList();
+	public List<SdoObjBase> SdoObjectsNonVolatileButNotExpose => SdoObjectsNonVolatile.Where(x => !x.Expose).ToList();
+
+	public List<SdoObjVar> SdoObjVarNonVolatileButNotExpose => SdoObjectsNonVolatileButNotExpose.OfType<SdoObjVar>().ToList();
+	public List<SdoObjArray> SdoObjArrayNonVolatileButNotExpose => SdoObjectsNonVolatileButNotExpose.OfType<SdoObjArray>().ToList();
+	public List<SdoObjRecord> SdoObjRecordNonVolatileButNotExpose => SdoObjectsNonVolatileButNotExpose.OfType<SdoObjRecord>().ToList();
+
 	public int GetDataTypeBitSize(string dataTypeName)
 	{
 		var dataType = DataTypes.FirstOrDefault(x => x.Name == dataTypeName) ?? throw new Exception($"Failed to find data type {dataTypeName}");

@@ -1,11 +1,15 @@
-#ifndef __ZEPHYR_SDO_OBJECTS_H__
-#define __ZEPHYR_SDO_OBJECTS_H__
+<#@ output extension=".h" #>
+<#@ template language="C#" #>
+// clang-format off
 
-/******************************************************************************************
+/**
  * THIS FILE IS AUTO GENERATED 
  * GENERATED AT <#= $"{DateTime.Now:yyyy-MM-dd HH:mm:ss}" #>
  * !!! DO NOT EDIT IT !!!
- *****************************************************************************************/
+ */
+
+#ifndef __ZEPHYR_SDO_OBJECTS_H__
+#define __ZEPHYR_SDO_OBJECTS_H__
 
 #include <stdint.h>
 
@@ -91,9 +95,11 @@ typedef struct obj_list {
 #define ATYPE_RWpre_safe (ATYPE_Wpre | ATYPE_Wsafe | ATYPE_RO)
 
 /******************************************************************************************
- *  Object Definitions
+ *  EXPOSED OBJECTS DEFINITIONS
  *****************************************************************************************/
-<# 	// sdo object var
+<# 	///<summary> 
+	/// SDO OBJECT VAR
+	///</summary>
 	foreach(var item in Ctx.SdoObjVarToExpose) {
 		var typeDef = item.TypeDef;
 #>
@@ -102,7 +108,9 @@ typedef <#= typeDef #>;
 }
 #>
 
-<# 	// sdo object record
+<# 	///<summary> 
+	///sdo object record
+	///</summary>
 	foreach(var item in Ctx.SdoObjRecordToExpose) {
 		var type_def = item.TypeName;
 		var struct_name = item.StructName;
@@ -125,6 +133,9 @@ typedef struct <#= struct_name #> {
 #>
 
 <#
+	///<summary>
+	/// SDO OBJECT ARRAY
+	///</summary>
 	foreach(var item in Ctx.SdoObjArrayToExpose) {
 		var type_def = item.TypeName;
 		var struct_name = item.StructName;
@@ -139,7 +150,7 @@ typedef struct <#= struct_name #> {
 			if(sub_idx>1) {
 				continue;
 			}
-			var type_entry = sub_idx==0 ? item.Entries[sub_idx].RecordTypeEntry : $"{item.Entries[sub_idx].ArrayTypeEntry}[{entriesCount-1}]";
+			var type_entry = sub_idx == 0 ? item.Entries[sub_idx].RecordTypeEntry : $"{item.Entries[sub_idx].ArrayTypeEntry}[{entriesCount-1}]";
 #>
   <#= type_entry #>;
 <#
@@ -154,15 +165,16 @@ typedef struct <#= struct_name #> {
 
 
 /******************************************************************************************
- *  Object list(s) for the SDO server
+ *  OBJECT LIST(S) FOR THE SDO SERVER
  *****************************************************************************************/
 extern const obj_list_t sdo_objects[];
 <#
 	foreach(var item in Ctx.SdoObjectsToExpose) {
 		var type_name = item.TypeName;
 		var inst = item.InstId;
+		var is_var = item is SdoObjVar;
 #>
-extern const <#= type_name #> <#= inst #>;
+extern<#= is_var?"":" const"#> <#= type_name #> <#= inst #>;
 <#
 	} // end of foreach(var item in Ctx.SdoObjectsToExpose)
 #>
@@ -230,8 +242,5 @@ static ALWAYS_INLINE int16_t sdo_find_subindex(int32_t nidx, uint8_t subindex)
 	return -1;
 }
 
-
-
-
-
 #endif // __ZEPHYR_SDO_OBJECTS_H__
+// clang-format on

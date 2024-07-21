@@ -1,11 +1,13 @@
+// clang-format off
+
+/**
+ * THIS FILE IS AUTO GENERATED 
+ * GENERATED AT 2024-07-21 14:41:53
+ * !!! DO NOT EDIT IT !!!
+ */
+
 #ifndef __ZEPHYR_SDO_OBJECTS_H__
 #define __ZEPHYR_SDO_OBJECTS_H__
-
-/******************************************************************************************
- * THIS FILE IS AUTO GENERATED 
- * GENERATED AT 2024-07-20 22:37:48
- * !!! DO NOT EDIT IT !!!
- *****************************************************************************************/
 
 #include <stdint.h>
 
@@ -91,7 +93,7 @@ typedef struct obj_list {
 #define ATYPE_RWpre_safe (ATYPE_Wpre | ATYPE_Wsafe | ATYPE_RO)
 
 /******************************************************************************************
- *  Object Definitions
+ *  EXPOSED OBJECTS DEFINITIONS
  *****************************************************************************************/
 typedef int16_t hysteresis_at_torque_control_switching_t; 
 typedef int16_t x_1st_damping_frequency_t; 
@@ -481,7 +483,7 @@ typedef struct digital_outputs {
 
 
 /******************************************************************************************
- *  Object list(s) for the SDO server
+ *  OBJECT LIST(S) FOR THE SDO SERVER
  *****************************************************************************************/
 extern const obj_list_t sdo_objects[];
 extern const store_parameters_t store_parameters;
@@ -499,13 +501,13 @@ extern const sync_manager_channel_2_t sync_manager_channel_2;
 extern const sync_manager_channel_3_t sync_manager_channel_3;
 extern const sync_manager_2_synchronization_t sync_manager_2_synchronization;
 extern const sync_manager_3_synchronization_t sync_manager_3_synchronization;
-extern const hysteresis_at_torque_control_switching_t hysteresis_at_torque_control_switching;
-extern const x_1st_damping_frequency_t x_1st_damping_frequency;
-extern const x_2nd_damping_filter_setup_t x_2nd_damping_filter_setup;
-extern const positioning_complete_in_position_range_t positioning_complete_in_position_range;
-extern const function_expansion_setup_2_t function_expansion_setup_2;
-extern const tuning_filter_t tuning_filter;
-extern const drive_serial_number_t drive_serial_number;
+extern hysteresis_at_torque_control_switching_t hysteresis_at_torque_control_switching;
+extern x_1st_damping_frequency_t x_1st_damping_frequency;
+extern x_2nd_damping_filter_setup_t x_2nd_damping_filter_setup;
+extern positioning_complete_in_position_range_t positioning_complete_in_position_range;
+extern function_expansion_setup_2_t function_expansion_setup_2;
+extern tuning_filter_t tuning_filter;
+extern drive_serial_number_t drive_serial_number;
 extern const alarm_accessory_information_t alarm_accessory_information;
 extern const digital_outputs_t digital_outputs;
 
@@ -572,8 +574,5 @@ static ALWAYS_INLINE int16_t sdo_find_subindex(int32_t nidx, uint8_t subindex)
 	return -1;
 }
 
-
-
-
-
 #endif // __ZEPHYR_SDO_OBJECTS_H__
+// clang-format on

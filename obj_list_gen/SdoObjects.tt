@@ -1,15 +1,15 @@
 <#@ output extension=".c" #>
 <#@ template language="C#" #>
-#include "zephyr/drivers/ethercat.h"
 // clang-format off
 
-/******************************************************************************************
+/**
  * THIS FILE IS AUTO GENERATED 
  * GENERATED AT <#= $"{DateTime.Now:yyyy-MM-dd HH:mm:ss}" #>
  * !!! DO NOT EDIT IT !!!
- *****************************************************************************************/
+ */
 
 
+#include "zephyr/drivers/ethercat.h"
 
 /******************************************************************************************
  * PRE DEFINED STRINGS
@@ -26,9 +26,196 @@ static const char <#= inst_name #>[] = "<#= key #>";
 #>
 
 /******************************************************************************************
+ * NON-VOLATILE (but not to expose) SDO OBJECT TYPE DEFINITIONS
+ *****************************************************************************************/
+<# 	///<summary> 
+	/// SDO OBJECT VAR
+	///</summary>
+	foreach(var item in Ctx.SdoObjVarNonVolatileButNotExpose) {
+		var typeDef = item.TypeDef;
+#>
+typedef <#= typeDef #>;
+<#
+}
+#>
+
+<# 	///<summary> 
+	///sdo object record
+	///</summary>
+	foreach(var item in Ctx.SdoObjRecordNonVolatileButNotExpose) {
+		var type_def = item.TypeName;
+		var struct_name = item.StructName;
+#>
+typedef struct <#= struct_name #> {
+<#
+		foreach(var e in item.Entries) {
+			if(e.DataRef == "NULL")
+				continue;
+			var type_entry = e.RecordTypeEntry;
+#>
+  <#= type_entry #>;
+<#
+		} // end of foreach(var e in item.Entries)
+#>
+} <#= type_def #>;
+
+<#
+	} // end of foreach(var item in Ctx.SdoObjRecordNonVolatileButNotExpose)
+#>
+
+<#
+	///<summary>
+	/// SDO OBJECT ARRAY
+	///</summary>
+	foreach(var item in Ctx.SdoObjArrayNonVolatileButNotExpose) {
+		var type_def = item.TypeName;
+		var struct_name = item.StructName;
+#>
+typedef struct <#= struct_name #> {
+<#
+		var entriesCount = item.Entries.Count;
+		for(int sub_idx = 0; sub_idx < entriesCount; sub_idx++) {
+			if(sub_idx==0 && item.Entries[sub_idx].DataRef == "NULL") {
+				continue;
+			} 
+			if(sub_idx>1) {
+				continue;
+			}
+			var type_entry = sub_idx == 0 ? item.Entries[sub_idx].RecordTypeEntry : $"{item.Entries[sub_idx].ArrayTypeEntry}[{entriesCount-1}]";
+#>
+  <#= type_entry #>;
+<#
+		} // end of for(int sub_idx = 0; sub_idx < item.Entries.Count; sub_idx++)
+#>
+} <#= type_def #>;
+
+<#
+	} // end of foreach(var item in Ctx.SdoObjArrayNonVolatileButNotExpose)
+#>
+
+/******************************************************************************************
+ * NON-VOLATILE (but not to expose) SDO OBJECT INSTANCE IMPLEMENTATIONS
+ *****************************************************************************************/
+<#  	// sdo var
+	foreach(var item in Ctx.SdoObjVarNonVolatileButNotExpose) {
+		var type_name = item.TypeName;
+		var inst = item.InstId;
+#>
+static <#= type_name #> <#= inst #> = <#= item.Entry.Value #>; 
+<#
+	} // end of foreach(var item in Ctx.SdoObjVarNonVolatileButNotExpose)
+#>
+
+<# 	// sdo record
+	foreach(var item in Ctx.SdoObjRecordNonVolatileButNotExpose) {
+		var type_name = item.TypeName;
+		var inst = item.InstId;
+#>
+static <#= type_name #> <#= inst #> = {
+<#
+		foreach(var sub in item.Entries) {
+			if(sub.DataRef == "NULL")
+				continue;
+			var inst_name = sub.InstName;
+			var init_value = sub.InitValue;
+#>
+	.<#= inst_name #> = <#= init_value #>,
+<#
+		} // end of foreach(var sub in item.Entries)
+#>
+};
+
+<#
+	} // end of foreach(var item in Ctx.SdoObjectsNonVolatileButNotExpose)
+#>
+
+<#	// sdo array
+	foreach(var item in Ctx.SdoObjArrayNonVolatileButNotExpose) {
+		var type_name = item.TypeName;
+		var inst = item.InstId;
+#>
+static <#= type_name #> <#= inst #> = {
+<#
+		foreach(var sub in item.Entries) {
+			if(sub.DataRef == "NULL")
+				continue;
+			var inst_name = sub.InstName;
+			var init_value = sub.InitValue;
+#>
+	.<#= inst_name #> = <#= init_value #>,
+<#
+		} // end of foreach(var sub in item.Entries)
+#>
+};
+
+<#
+	} // end of foreach(var item in Ctx.SdoObjectsNonVolatileButNotExpose)
+#>
+
+
+/******************************************************************************************
+ * NON-VOLATILE (exposed) SDO OBJECT INSTANCE IMPLEMENTATIONS
+ *****************************************************************************************/
+<#
+	foreach(var item in Ctx.SdoObjVarToExpose) {
+		var type_name = item.TypeName;
+		var inst = item.InstId;
+#>
+<#= type_name #> <#= inst #> = <#= item.Entry.Value #>; 
+<#
+	} // end of foreach(var item in Ctx.SdoObjVarToExpose)
+#>
+
+<#
+	foreach(var item in Ctx.SdoObjRecordToExpose) {
+		var type_name = item.TypeName;
+		var inst = item.InstId;
+#>
+const <#= type_name #> <#= inst #> = {
+<#
+		foreach(var sub in item.Entries) {
+			if(sub.DataRef == "NULL")
+				continue;
+			var inst_name = sub.InstName;
+			var init_value = sub.InitValue;
+#>
+	.<#= inst_name #> = <#= init_value #>,
+<#
+		} // end of foreach(var sub in item.Entries)
+#>
+};
+
+<#
+	} // end of foreach(var item in Ctx.SdoObjRecordToExpose)
+#>
+
+<#	// sdo array
+	foreach(var item in Ctx.SdoObjArrayToExpose) {
+		var type_name = item.TypeName;
+		var inst = item.InstId;
+#>
+static <#= type_name #> <#= inst #> = {
+<#
+		foreach(var sub in item.Entries) {
+			if(sub.DataRef == "NULL")
+				continue;
+			var inst_name = sub.InstName;
+			var init_value = sub.InitValue;
+#>
+	.<#= inst_name #> = <#= init_value #>,
+<#
+		} // end of foreach(var sub in item.Entries)
+#>
+};
+
+<#
+	} // end of foreach(var item in Ctx.SdoObjectsNonVolatileButNotExpose)
+#>
+
+
+/******************************************************************************************
  * OBJECT DESCRIPTIONS
  *****************************************************************************************/
- 
 <#
 	foreach(var obj in Ctx.SdoObjects) {
 		var entries = obj.GetEntries();
