@@ -43,6 +43,7 @@ exposed_indexes:
   - 0x3648
   - 0x60fe
 non_volatile_indexes:
+  - 0x1008
   - 0x1600
   - 0x1601
   - 0x1602

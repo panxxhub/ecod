@@ -152,11 +152,11 @@ public record SdoEntry(uint Id, uint Addr32, string CANOpenDataType, int BitSize
 		"DTYPE_INTEGER16" => Value == 0 ? "0x0" : $"0x{Value:x4}",
 		"DTYPE_UNSIGNED32" => Value == 0 ? "0x0" : $"0x{Value:x8}",
 		"DTYPE_INTEGER32" => Value == 0 ? "0x0" : $"0x{Value:x8}",
-		// "DTYPE_OCTET_STRING" => $"{{{string.Join(", ", Enumerable.Repeat("0", BitSize / 8))}}}",
 		"DTYPE_OCTET_STRING" => "{0}",
-		// "DTYPE_VISIBLE_STRING" => $"{{{string.Join(", ", Enumerable.Repeat("0", BitSize / 8))}}}",
 		"DTYPE_VISIBLE_STRING" => "{0}",
 		_ => $"0x{Value:x}"
+		// "DTYPE_OCTET_STRING" => $"{{{string.Join(", ", Enumerable.Repeat("0", BitSize / 8))}}}",
+		// "DTYPE_VISIBLE_STRING" => $"{{{string.Join(", ", Enumerable.Repeat("0", BitSize / 8))}}}",
 	};
 }
 

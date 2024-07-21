@@ -101,7 +101,7 @@ typedef struct <#= struct_name #> {
 		var type_name = item.TypeName;
 		var inst = item.InstId;
 #>
-static <#= type_name #> <#= inst #> = <#= item.Entry.Value #>; 
+static <#= type_name #> <#= inst #> = <#= item.Entry.InitValue #>; 
 <#
 	} // end of foreach(var item in Ctx.SdoObjVarNonVolatileButNotExpose)
 #>
@@ -136,14 +136,16 @@ static <#= type_name #> <#= inst #> = {
 #>
 static <#= type_name #> <#= inst #> = {
 <#
+		int sub_idx = 0;
 		foreach(var sub in item.Entries) {
 			if(sub.DataRef == "NULL")
 				continue;
-			var inst_name = sub.InstName;
+			var inst_name = $"elements[{sub_idx}]";
 			var init_value = sub.InitValue;
 #>
 	.<#= inst_name #> = <#= init_value #>,
 <#
+			sub_idx++;
 		} // end of foreach(var sub in item.Entries)
 #>
 };
@@ -161,7 +163,7 @@ static <#= type_name #> <#= inst #> = {
 		var type_name = item.TypeName;
 		var inst = item.InstId;
 #>
-<#= type_name #> <#= inst #> = <#= item.Entry.Value #>; 
+<#= type_name #> <#= inst #> = <#= item.Entry.InitValue #>; 
 <#
 	} // end of foreach(var item in Ctx.SdoObjVarToExpose)
 #>
