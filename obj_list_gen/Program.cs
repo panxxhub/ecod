@@ -59,8 +59,8 @@ command.SetHandler((configFile, outputDirectory) =>
 	var src_str = sdoObjects.TransformText();
 	var hdr_str = sdoObjectsHeader.TransformText();
 
-	var outputFilePath = Path.Combine(outputDirectory.FullName, "obj_list_gen.c");
-	var outputHeaderFilePath = Path.Combine(outputDirectory.FullName, "obj_list_gen.h");
+	var outputFilePath = Path.Combine(outputDirectory.FullName, "sdo_list.c");
+	var outputHeaderFilePath = Path.Combine(outputDirectory.FullName, "sdo_list.h");
 	File.WriteAllText(outputFilePath, src_str);
 	File.WriteAllText(outputHeaderFilePath, hdr_str);
 
