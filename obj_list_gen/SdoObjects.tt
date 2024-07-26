@@ -8,8 +8,7 @@
  * !!! DO NOT EDIT IT !!!
  */
 
-
-#include "zephyr/drivers/ethercat.h"
+#include <sdo/sdo_list.h>
 
 /******************************************************************************************
  * PRE DEFINED STRINGS
@@ -96,6 +95,7 @@ typedef struct <#= struct_name #> {
 /******************************************************************************************
  * NON-VOLATILE (but not to expose) SDO OBJECT INSTANCE IMPLEMENTATIONS
  *****************************************************************************************/
+// sdo var
 <#  	// sdo var
 	foreach(var item in Ctx.SdoObjVarNonVolatileButNotExpose) {
 		var type_name = item.TypeName;
@@ -105,7 +105,7 @@ static <#= type_name #> <#= inst #> = <#= item.Entry.InitValue #>;
 <#
 	} // end of foreach(var item in Ctx.SdoObjVarNonVolatileButNotExpose)
 #>
-
+// sdo records
 <# 	// sdo record
 	foreach(var item in Ctx.SdoObjRecordNonVolatileButNotExpose) {
 		var type_name = item.TypeName;
@@ -128,7 +128,7 @@ static <#= type_name #> <#= inst #> = {
 <#
 	} // end of foreach(var item in Ctx.SdoObjectsNonVolatileButNotExpose)
 #>
-
+// sdo array
 <#	// sdo array
 	foreach(var item in Ctx.SdoObjArrayNonVolatileButNotExpose) {
 		var type_name = item.TypeName;
@@ -136,16 +136,15 @@ static <#= type_name #> <#= inst #> = {
 #>
 static <#= type_name #> <#= inst #> = {
 <#
-		int sub_idx = 0;
-		foreach(var sub in item.Entries) {
-			if(sub.DataRef == "NULL")
+		for(int sub_idx = 0; sub_idx < 2; sub_idx++) {
+			var sub = item.GetEntries()[sub_idx];
+			if(sub_idx == 0 && sub.DataRef == "NULL") 
 				continue;
-			var inst_name = $"elements[{sub_idx}]";
-			var init_value = sub.InitValue;
+			var inst_name =  sub_idx == 1 ? "elements" : sub.InstName;
+			var init_value = sub_idx == 1 ? item.ArrayElementsInit : sub.InitValue;
 #>
 	.<#= inst_name #> = <#= init_value #>,
 <#
-			sub_idx++;
 		} // end of foreach(var sub in item.Entries)
 #>
 };
@@ -158,6 +157,7 @@ static <#= type_name #> <#= inst #> = {
 /******************************************************************************************
  * NON-VOLATILE (exposed) SDO OBJECT INSTANCE IMPLEMENTATIONS
  *****************************************************************************************/
+// sdo var
 <#
 	foreach(var item in Ctx.SdoObjVarToExpose) {
 		var type_name = item.TypeName;
@@ -168,6 +168,7 @@ static <#= type_name #> <#= inst #> = {
 	} // end of foreach(var item in Ctx.SdoObjVarToExpose)
 #>
 
+// sdo records
 <#
 	foreach(var item in Ctx.SdoObjRecordToExpose) {
 		var type_name = item.TypeName;
@@ -190,19 +191,21 @@ const <#= type_name #> <#= inst #> = {
 <#
 	} // end of foreach(var item in Ctx.SdoObjRecordToExpose)
 #>
-
+// sdo array
 <#	// sdo array
 	foreach(var item in Ctx.SdoObjArrayToExpose) {
 		var type_name = item.TypeName;
 		var inst = item.InstId;
 #>
-static <#= type_name #> <#= inst #> = {
+const <#= type_name #> <#= inst #> = {
 <#
-		foreach(var sub in item.Entries) {
-			if(sub.DataRef == "NULL")
+		for(int sub_idx = 0; sub_idx < 2; sub_idx++) {
+			var sub = item.GetEntries()[sub_idx];
+			if (sub_idx == 0 && sub.DataRef == "NULL")
 				continue;
-			var inst_name = sub.InstName;
-			var init_value = sub.InitValue;
+			var inst_name =  sub_idx == 1 ? "elements" : sub.InstName;
+			var init_value = sub_idx == 1 ? item.ArrayElementsInit : sub.InitValue;
+
 #>
 	.<#= inst_name #> = <#= init_value #>,
 <#
@@ -250,4 +253,3 @@ const obj_list_t sdo_objects[] = {
 };
 
 // clang-format on
-

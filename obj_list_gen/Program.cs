@@ -64,11 +64,6 @@ command.SetHandler((configFile, outputDirectory) =>
 	File.WriteAllText(outputFilePath, src_str);
 	File.WriteAllText(outputHeaderFilePath, hdr_str);
 
-
-
-
-
-
 }, yamlConfigFilePathOption, outputDirectoryOption);
 
 await command.InvokeAsync(args);

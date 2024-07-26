@@ -11,6 +11,7 @@
 #ifndef __ZEPHYR_SDO_OBJECTS_H__
 #define __ZEPHYR_SDO_OBJECTS_H__
 
+#include <zephyr/toolchain/common.h>
 #include <stdint.h>
 
 typedef struct obj_desc {
@@ -29,7 +30,7 @@ typedef struct obj_list {
 	uint8_t maxsub;
 	uint8_t pad1;
 	const char *name;
-	const obj_desc_t *objdesc;
+	const obj_desc_t *const objdesc;
 } obj_list_t;
 
 #define OBJH_READ  0
@@ -144,10 +145,10 @@ typedef struct <#= struct_name #> {
 <#
 		var entriesCount = item.Entries.Count;
 		for(int sub_idx = 0; sub_idx < entriesCount; sub_idx++) {
-			if(sub_idx==0 && item.Entries[sub_idx].DataRef == "NULL") {
+			if(sub_idx == 0 && item.Entries[sub_idx].DataRef == "NULL") {
 				continue;
 			} 
-			if(sub_idx>1) {
+			if(sub_idx > 1) {
 				continue;
 			}
 			var type_entry = sub_idx == 0 ? item.Entries[sub_idx].RecordTypeEntry : $"{item.Entries[sub_idx].ArrayTypeEntry}[{entriesCount-1}]";
@@ -219,7 +220,6 @@ static ALWAYS_INLINE int32_t sdo_find_object(uint16_t index)
  */
 static ALWAYS_INLINE int16_t sdo_find_subindex(int32_t nidx, uint8_t subindex)
 {
-	const obj_desc_t *objd;
 	int16_t n = sdo_find_object(nidx);
 	if(n < 0) {
 		return -1;
@@ -229,7 +229,7 @@ static ALWAYS_INLINE int16_t sdo_find_subindex(int32_t nidx, uint8_t subindex)
 	int high = max_sub - 1;
 	int mid = (low + high) / 2;
 	for(int iter = 0; iter < 6; iter++) {
-		objd = sdo_objects[n].objdesc[mid];
+		const obj_desc_t *const objd = &sdo_objects[n].objdesc[mid];
 		if (objd->subindex == subindex) {
 			return mid;
 		} else if (objd->subindex < subindex) {

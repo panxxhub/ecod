@@ -84,6 +84,7 @@
 		"BITARR",
 		"BITSPOS",
 		"BYTESOFFSET",
+		"controlword",
 		"delayable",
 		"DLSTATUS",
 		"dnode",

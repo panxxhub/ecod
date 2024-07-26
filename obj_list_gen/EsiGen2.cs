@@ -1,3 +1,4 @@
+using System.Text;
 using System.Text.RegularExpressions;
 using EsiBase;
 using EsiInfo;
@@ -45,7 +46,7 @@ public static partial class EsiHelperExtensions
 		var typeName = dataTypeName;
 		if (typeName == "BOOL")
 		{
-			return "DTYPE_BOOL";
+			return "DTYPE_BOOLEAN";
 		}
 		if (typeName == "BYTE")
 		{
@@ -92,7 +93,7 @@ public static partial class EsiHelperExtensions
 		{
 			return $"char {typeName}[{count}]";
 		}
-		else if (canOpenDataType == "DTYPE_BOOL")
+		else if (canOpenDataType == "DTYPE_BOOLEAN")
 		{
 			return $"bool {typeName}";
 		}
@@ -141,11 +142,11 @@ public record SdoEntry(uint Id, uint Addr32, string CANOpenDataType, int BitSize
 	public bool Exposure => Addr32 != 0;
 	public int SubIdx => (int)(Id & 0xFFFF);
 	public string RecordTypeEntry => EsiHelperExtensions.ToCTypeDef(CANOpenDataType, Name.ToInstName(), BitSize / 8);
-	public string ArrayTypeEntry => EsiHelperExtensions.ToCTypeDef(CANOpenDataType, "element", BitSize / 8);
+	public string ArrayTypeEntry => EsiHelperExtensions.ToCTypeDef(CANOpenDataType, "elements", BitSize / 8);
 	public string InstName => Name.ToInstName();
 	public string InitValue => CANOpenDataType switch
 	{
-		"DTYPE_BOOL" => Value == 0 ? "false" : "true",
+		"DTYPE_BOOLEAN" => Value == 0 ? "false" : "true",
 		"DTYPE_UNSIGNED8" => Value == 0 ? "0x0" : $"0x{Value:x2}",
 		"DTYPE_INTEGER8" => Value == 0 ? "0x0" : $"0x{Value:x2}",
 		"DTYPE_UNSIGNED16" => Value == 0 ? "0x0" : $"0x{Value:x4}",
@@ -198,14 +199,30 @@ public class SdoObjArray(int index, bool expose, bool non_volatile, string name,
 
 	public override List<SdoEntry> GetEntries()
 	{
-		return Entries;
+		return [.. Entries.OrderBy(x => x.SubIdx)];
 	}
-
-
 
 	public override string ObjectType => "OTYPE_ARRAY";
 
 	public override int MaxSubIndex => Entries.Count - 1;
+	public string ArrayElementsInit
+	{
+		get
+		{
+			var strBuilder = new StringBuilder();
+			strBuilder.Append('{');
+			for (int i = 1; i < Entries.Count; i++)
+			{
+				strBuilder.Append(Entries[i].InitValue);
+				if (i != Entries.Count - 1)
+				{
+					strBuilder.Append(", ");
+				}
+			}
+			strBuilder.Append('}');
+			return strBuilder.ToString();
+		}
+	}
 }
 
 public class SdoObjRecord(int index, bool expose, bool non_volatile, string name, string str_inst_name, List<SdoEntry> entries) : SdoObjBase(index, expose, non_volatile, name, str_inst_name)
@@ -323,7 +340,7 @@ public class EsiGen2ContextFactory(DeviceTypeProfile Profile, GeneratorConfig Ge
 						var name = obj.Name[0].Value;
 						var name_str_inst_name = GetInstName(indexedNames, name);
 						var is_string = dtype == "DTYPE_OCTET_STRING" || dtype == "DTYPE_VISIBLE_STRING";
-						var data_ref = non_volatile ? (is_string ? $"{name.ToInstName()}" : $"&{name.ToInstName()}") : "NULL";
+						var data_ref = non_volatile ? (is_string ? $"{name.ToInstName()}" : $"(uint8_t*)(&{name.ToInstName()})") : "NULL";
 
 						var entry = new SdoEntry(
 							Id: idx,
@@ -373,7 +390,7 @@ public class EsiGen2ContextFactory(DeviceTypeProfile Profile, GeneratorConfig Ge
 								AccessType: a_flag,
 								StrInstName: GetInstName(indexedNames, subItem.Name),
 								Value: default_value,
-								DataRef: this_non_volatile ? $"&{objInstName}.{subItemName}" : "NULL",
+								DataRef: this_non_volatile ? $"(uint8_t*)(&{objInstName}.{subItemName})" : "NULL",
 								Name: subItem.Name
 							);
 							subEntries.Add(subEntry);
@@ -419,7 +436,7 @@ public class EsiGen2ContextFactory(DeviceTypeProfile Profile, GeneratorConfig Ge
 								AccessType: atype_flag(dataType.SubItem[subIdx].Flags.Access.Value),
 								StrInstName: GetInstName(indexedNames, dataType.SubItem[subIdx].Name),
 								Value: default_value,
-								DataRef: this_non_volatile ? $"&{obj.Name[0].Value.ToInstName()}.{suffix}" : "NULL",
+								DataRef: this_non_volatile ? $"(uint8_t*)(&{obj.Name[0].Value.ToInstName()}.{suffix})" : "NULL",
 								Name: subItem.Name
 							);
 
