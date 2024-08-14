@@ -11,8 +11,7 @@
 #ifndef __ZEPHYR_SDO_OBJECTS_H__
 #define __ZEPHYR_SDO_OBJECTS_H__
 
-#include <zephyr/toolchain/common.h>
-#include <stdint.h>
+#include <zephyr/kernel.h>
 
 typedef struct obj_desc {
 	uint16_t subindex;
@@ -101,7 +100,7 @@ typedef struct obj_list {
 <# 	///<summary> 
 	/// SDO OBJECT VAR
 	///</summary>
-	foreach(var item in Ctx.SdoObjVarToExpose) {
+	foreach(var item in ctx.SdoObjVarToExpose) {
 		var typeDef = item.TypeDef;
 #>
 typedef <#= typeDef #>; 
@@ -112,7 +111,7 @@ typedef <#= typeDef #>;
 <# 	///<summary> 
 	///sdo object record
 	///</summary>
-	foreach(var item in Ctx.SdoObjRecordToExpose) {
+	foreach(var item in ctx.SdoObjRecordToExpose) {
 		var type_def = item.TypeName;
 		var struct_name = item.StructName;
 #>
@@ -130,14 +129,14 @@ typedef struct <#= struct_name #> {
 } <#= type_def #>;
 
 <#
-	} // end of foreach(var item in Ctx.SdoObjRecordToExpose)
+	} // end of foreach(var item in ctx.SdoObjRecordToExpose)
 #>
 
 <#
 	///<summary>
 	/// SDO OBJECT ARRAY
 	///</summary>
-	foreach(var item in Ctx.SdoObjArrayToExpose) {
+	foreach(var item in ctx.SdoObjArrayToExpose) {
 		var type_def = item.TypeName;
 		var struct_name = item.StructName;
 #>
@@ -160,7 +159,7 @@ typedef struct <#= struct_name #> {
 } <#= type_def #>;
 
 <#
-	} // end of foreach(var item in Ctx.SdoObjArrayToExpose)
+	} // end of foreach(var item in ctx.SdoObjArrayToExpose)
 #>
 
 
@@ -170,21 +169,21 @@ typedef struct <#= struct_name #> {
  *****************************************************************************************/
 extern const obj_list_t sdo_objects[];
 <#
-	foreach(var item in Ctx.SdoObjectsToExpose) {
+	foreach(var item in ctx.SdoObjectsToExpose) {
 		var type_name = item.TypeName;
 		var inst = item.InstId;
 		var is_var = item is SdoObjVar;
 #>
 extern<#= is_var?"":" const"#> <#= type_name #> <#= inst #>;
 <#
-	} // end of foreach(var item in Ctx.SdoObjectsToExpose)
+	} // end of foreach(var item in ctx.SdoObjectsToExpose)
 #>
 
 /******************************************************************************************
  * SDO_OBJECTS HELPERS
  *****************************************************************************************/
-#define SDO_OBJECTS_COUNT 		<#= Ctx.SdoObjectsCount #>
-#define SOD_OBJECTS_COUNT_LOG2UP	<#= Ctx.SdoObjectsCountLog2Up #>
+#define SDO_OBJECTS_COUNT 		<#= ctx.SdoObjectsCount #>
+#define SDO_OBJECTS_COUNT_LOG2UP	<#= ctx.SdoObjectsCountLog2Up #>
 
 /** Search for an object index matching the wanted value in the Object List.
  * Search in a binary-search fashion.
@@ -194,12 +193,12 @@ extern<#= is_var?"":" const"#> <#= type_name #> <#= inst #>;
 static ALWAYS_INLINE int32_t sdo_find_object(uint16_t index)
 {
 #define SDO_BINARY_SEARCH_LOW_INIT  0
-#define SDO_BINARY_SEARCH_MID_INIT  <#= Ctx.SdoObjectsCount/2 #>
-#define SDO_BINARY_SEARCH_HIGH_INIT <#= Ctx.SdoObjectsCount-1 #>
+#define SDO_BINARY_SEARCH_MID_INIT  <#= ctx.SdoObjectsCount/2 #>
+#define SDO_BINARY_SEARCH_HIGH_INIT <#= ctx.SdoObjectsCount-1 #>
 	int low =  SDO_BINARY_SEARCH_LOW_INIT;
 	int high = SDO_BINARY_SEARCH_HIGH_INIT;
 	int mid =  SDO_BINARY_SEARCH_MID_INIT;
-	for(int iter = 0; iter < SOD_OBJECTS_COUNT_LOG2UP; iter++) {
+	for(int iter = 0; iter < SDO_OBJECTS_COUNT_LOG2UP; iter++) {
 		if (sdo_objects[mid].index == index) {
 			return mid;
 		} else if (sdo_objects[mid].index < index) {
@@ -216,9 +215,9 @@ static ALWAYS_INLINE int32_t sdo_find_object(uint16_t index)
  *
  * @param[in] nidx   = local array index of object we want to find sub-index to
  * @param[in] subindex   = value on sub-index of object we want to locate
- * @return local array index if we succeed, -1 if we didn't find the index.
+ * @return index(<<16) and sub-index if we succeed, -1 if we didn't find the index.
  */
-static ALWAYS_INLINE int16_t sdo_find_subindex(int32_t nidx, uint8_t subindex)
+static ALWAYS_INLINE uint32_t sdo_find_subindex(int32_t nidx, uint8_t subindex)
 {
 	int16_t n = sdo_find_object(nidx);
 	if(n < 0) {
@@ -231,7 +230,7 @@ static ALWAYS_INLINE int16_t sdo_find_subindex(int32_t nidx, uint8_t subindex)
 	for(int iter = 0; iter < 6; iter++) {
 		const obj_desc_t *const objd = &sdo_objects[n].objdesc[mid];
 		if (objd->subindex == subindex) {
-			return mid;
+			return n << 16 | mid;
 		} else if (objd->subindex < subindex) {
 			low = mid + 1;
 		} else {
@@ -241,6 +240,67 @@ static ALWAYS_INLINE int16_t sdo_find_subindex(int32_t nidx, uint8_t subindex)
 	}
 	return -1;
 }
+
+
+/**
+ * Restore the default values of the SDO objects.
+ * This function is called when the device is reset.
+ *
+ * @brief, for non-volatile objects, the default values are stored at the static object declaration.
+ */
+void sdo_restore_defaults(void);
+
+
+/**
+ * Restore the default values of the SDO objects with the given index.
+ *
+ * @param[in] index = index of the object to restore
+ */
+void sdo_restore_defaults_index(uint16_t index);
+
+
+/**
+ * Restore the default values of the SDO objects with the given index and sub-index.
+ *
+ * @param[in] index = index of the object to restore
+ * @param[in] subindex = sub-index of the object to restore
+ */
+void sdo_restore_defaults_subindex(uint16_t index, uint8_t subindex);
+
+#include <zephyr/fs/fs.h>
+/**
+ * Load the SDO objects from the non-volatile storage.
+ * This function is called when the user called the function to save all the configuration to the non-volatile storage.
+ */
+void sdo_objects_save_to_storage(struct fs_file_t *file);
+
+/**
+ * @brief Save the SDO object with the given index and subindex to the non-volatile storage.
+ * 
+ * @param file 
+ * @param index 
+ * @param subindex 
+ * @return int, 0 if success, -1 if failed
+ */
+int sdo_object_save_to_storage(struct fs_file_t *file, uint16_t index, uint8_t subindex);
+
+
+/**
+ * Initialize the SDO objects from the non-volatile storage.
+ * This function is called when the device is powered on.
+ */
+void sdo_objects_init_from_storage(struct fs_file_t *file);
+
+/**
+ * @brief Load sdo entry from index-subindex pair   
+ * 
+ * @param file 
+ * @param index 
+ * @param subindex 
+ * @return int 
+ */
+int sdo_object_load_from_storage(struct fs_file_t *file, uint16_t index, uint8_t subindex);
+
 
 #endif // __ZEPHYR_SDO_OBJECTS_H__
 // clang-format on

@@ -14,7 +14,7 @@
  * PRE DEFINED STRINGS
  *****************************************************************************************/
 <#
-	foreach(var item in Ctx.IndexedNames) {
+	foreach(var item in ctx.IndexedNames) {
 		var key = item.Key;
 		var value = item.Value;
 		var inst_name = $"str_inst_{value:x4}";
@@ -30,7 +30,7 @@ static const char <#= inst_name #>[] = "<#= key #>";
 <# 	///<summary> 
 	/// SDO OBJECT VAR
 	///</summary>
-	foreach(var item in Ctx.SdoObjVarNonVolatileButNotExpose) {
+	foreach(var item in ctx.SdoObjVarNonVolatileButNotExpose) {
 		var typeDef = item.TypeDef;
 #>
 typedef <#= typeDef #>;
@@ -41,7 +41,7 @@ typedef <#= typeDef #>;
 <# 	///<summary> 
 	///sdo object record
 	///</summary>
-	foreach(var item in Ctx.SdoObjRecordNonVolatileButNotExpose) {
+	foreach(var item in ctx.SdoObjRecordNonVolatileButNotExpose) {
 		var type_def = item.TypeName;
 		var struct_name = item.StructName;
 #>
@@ -59,14 +59,14 @@ typedef struct <#= struct_name #> {
 } <#= type_def #>;
 
 <#
-	} // end of foreach(var item in Ctx.SdoObjRecordNonVolatileButNotExpose)
+	} // end of foreach(var item in ctx.SdoObjRecordNonVolatileButNotExpose)
 #>
 
 <#
 	///<summary>
 	/// SDO OBJECT ARRAY
 	///</summary>
-	foreach(var item in Ctx.SdoObjArrayNonVolatileButNotExpose) {
+	foreach(var item in ctx.SdoObjArrayNonVolatileButNotExpose) {
 		var type_def = item.TypeName;
 		var struct_name = item.StructName;
 #>
@@ -89,7 +89,7 @@ typedef struct <#= struct_name #> {
 } <#= type_def #>;
 
 <#
-	} // end of foreach(var item in Ctx.SdoObjArrayNonVolatileButNotExpose)
+	} // end of foreach(var item in ctx.SdoObjArrayNonVolatileButNotExpose)
 #>
 
 /******************************************************************************************
@@ -97,17 +97,17 @@ typedef struct <#= struct_name #> {
  *****************************************************************************************/
 // sdo var
 <#  	// sdo var
-	foreach(var item in Ctx.SdoObjVarNonVolatileButNotExpose) {
+	foreach(var item in ctx.SdoObjVarNonVolatileButNotExpose) {
 		var type_name = item.TypeName;
 		var inst = item.InstId;
 #>
 static <#= type_name #> <#= inst #> = <#= item.Entry.InitValue #>; 
 <#
-	} // end of foreach(var item in Ctx.SdoObjVarNonVolatileButNotExpose)
+	} // end of foreach(var item in ctx.SdoObjVarNonVolatileButNotExpose)
 #>
 // sdo records
 <# 	// sdo record
-	foreach(var item in Ctx.SdoObjRecordNonVolatileButNotExpose) {
+	foreach(var item in ctx.SdoObjRecordNonVolatileButNotExpose) {
 		var type_name = item.TypeName;
 		var inst = item.InstId;
 #>
@@ -126,11 +126,11 @@ static <#= type_name #> <#= inst #> = {
 };
 
 <#
-	} // end of foreach(var item in Ctx.SdoObjectsNonVolatileButNotExpose)
+	} // end of foreach(var item in ctx.SdoObjectsNonVolatileButNotExpose)
 #>
 // sdo array
 <#	// sdo array
-	foreach(var item in Ctx.SdoObjArrayNonVolatileButNotExpose) {
+	foreach(var item in ctx.SdoObjArrayNonVolatileButNotExpose) {
 		var type_name = item.TypeName;
 		var inst = item.InstId;
 #>
@@ -150,7 +150,7 @@ static <#= type_name #> <#= inst #> = {
 };
 
 <#
-	} // end of foreach(var item in Ctx.SdoObjectsNonVolatileButNotExpose)
+	} // end of foreach(var item in ctx.SdoObjectsNonVolatileButNotExpose)
 #>
 
 
@@ -159,18 +159,18 @@ static <#= type_name #> <#= inst #> = {
  *****************************************************************************************/
 // sdo var
 <#
-	foreach(var item in Ctx.SdoObjVarToExpose) {
+	foreach(var item in ctx.SdoObjVarToExpose) {
 		var type_name = item.TypeName;
 		var inst = item.InstId;
 #>
 <#= type_name #> <#= inst #> = <#= item.Entry.InitValue #>; 
 <#
-	} // end of foreach(var item in Ctx.SdoObjVarToExpose)
+	} // end of foreach(var item in ctx.SdoObjVarToExpose)
 #>
 
 // sdo records
 <#
-	foreach(var item in Ctx.SdoObjRecordToExpose) {
+	foreach(var item in ctx.SdoObjRecordToExpose) {
 		var type_name = item.TypeName;
 		var inst = item.InstId;
 #>
@@ -189,11 +189,11 @@ const <#= type_name #> <#= inst #> = {
 };
 
 <#
-	} // end of foreach(var item in Ctx.SdoObjRecordToExpose)
+	} // end of foreach(var item in ctx.SdoObjRecordToExpose)
 #>
 // sdo array
 <#	// sdo array
-	foreach(var item in Ctx.SdoObjArrayToExpose) {
+	foreach(var item in ctx.SdoObjArrayToExpose) {
 		var type_name = item.TypeName;
 		var inst = item.InstId;
 #>
@@ -214,7 +214,7 @@ const <#= type_name #> <#= inst #> = {
 };
 
 <#
-	} // end of foreach(var item in Ctx.SdoObjectsNonVolatileButNotExpose)
+	} // end of foreach(var item in ctx.SdoObjectsNonVolatileButNotExpose)
 #>
 
 
@@ -222,7 +222,7 @@ const <#= type_name #> <#= inst #> = {
  * OBJECT DESCRIPTIONS
  *****************************************************************************************/
 <#
-	foreach(var obj in Ctx.SdoObjects) {
+	foreach(var obj in ctx.SdoObjects) {
 		var entries = obj.GetEntries();
 #>
 const obj_desc_t <#= obj.SdoInstName #>[] = {
@@ -235,7 +235,7 @@ const obj_desc_t <#= obj.SdoInstName #>[] = {
 #>
 };
 <#
-	} // end of foreach(var obj in Ctx.SdoObjects)
+	} // end of foreach(var obj in ctx.SdoObjects)
 #>
 
 /******************************************************************************************
@@ -243,13 +243,212 @@ const obj_desc_t <#= obj.SdoInstName #>[] = {
  *****************************************************************************************/
 const obj_list_t sdo_objects[] = {
 <#
-	foreach(var item in Ctx.SdoObjects) {
+	foreach(var item in ctx.SdoObjects) {
 
 #>
   { .index = <#= $"0x{item.Index:x4}" #>, .objtype = <#= item.ObjectType #>, .maxsub = <#= item.MaxSubIndex #>, .pad1 = 0, .name = <#= item.StrInstName #>, .objdesc = sdo_<#= $"{item.Index:x4}"#> },
 <#
-	} // end of foreach(var item in Ctx.SdoObjects)
+	} // end of foreach(var item in ctx.SdoObjects)
 #>
 };
+
+/******************************************************************************************
+ * SDO ENTRY MAP
+ *****************************************************************************************/
+typedef struct entry_addr_map {
+ 	uint16_t index;
+ 	uint8_t subindex;
+	uint32_t addr;
+} entry_addr_map_t;
+
+static const entry_addr_map_t sdo_entry_map[] = {
+<#
+	foreach(var item in ctx.SdoObjectsNonVolatile) {
+		var entries = item.GetEntries();
+		foreach(var e in entries) {
+			var non_volatile = e.NonVolatile;
+			if (!non_volatile) {
+				continue;
+			}
+#>
+	{ .index = <#= $"0x{item.Index:x4}" #>, .subindex = <#= $"0x{e.SubIdx:x2}" #>, .addr = <#=  $"0x{(e.Addr32/8):x4}" #>},
+<#
+		} // end of foreach(var e in entries)
+	} // end of foreach(var item in ctx.SdoObjects)
+#>
+};
+
+
+
+#include <string.h>
+void sdo_restore_defaults(void)
+{
+	for (int i = 0; i < SDO_OBJECTS_COUNT; i++) {
+		const obj_list_t *const sdo_obj = &sdo_objects[i];
+		for (int j = 0; j < sdo_obj->maxsub; j++) {
+			const obj_desc_t *const entry = sdo_obj->objdesc + j;
+			if (entry->data != NULL) {
+				// restore default value
+				memcpy((void *)entry->data, &entry->value, entry->bitlength / 8);
+			}
+		}
+	}
+}
+
+void sdo_restore_defaults_index(uint16_t index)
+{
+	const obj_list_t *const sdo_obj = &sdo_objects[index];
+	for (int j = 0; j < sdo_obj->maxsub; j++) {
+		const obj_desc_t *const entry = sdo_obj->objdesc + j;
+		if (entry->data != NULL) {
+			// restore default value
+			memcpy((void *)entry->data, &entry->value, entry->bitlength / 8);
+		}
+	}
+}
+
+void sdo_restore_defaults_subindex(uint16_t index, uint8_t subindex)
+{
+	const obj_list_t *const sdo_obj = &sdo_objects[index];
+	const obj_desc_t *const entry = sdo_obj->objdesc + subindex;
+	if (entry->data != NULL) {
+		// restore default value
+		memcpy((void *)entry->data, &entry->value, entry->bitlength / 8);
+	}
+}
+
+void sdo_objects_save_to_storage(struct fs_file_t *file)
+{
+	for (int i = 0; i < sizeof(sdo_entry_map) / sizeof(entry_addr_map_t); i++) {
+		const entry_addr_map_t *const entry = &sdo_entry_map[i];
+		uint32_t my_index = sdo_find_subindex(entry->index, entry->subindex);
+
+		if (my_index == 0) {
+			continue;
+		}
+		uint16_t index = my_index >> 16;
+		uint8_t subindex = my_index & 0xff;
+
+		const obj_desc_t *const sdo_entry = &sdo_objects[index].objdesc[subindex];
+
+		if (sdo_entry->data == NULL) {
+			continue;
+		}
+
+		fs_seek(file, entry->addr, FS_SEEK_SET);
+		fs_write(file, sdo_entry->data, sdo_entry->bitlength / 8);
+	}
+}
+
+void sdo_objects_init_from_storage(struct fs_file_t *file)
+{
+	for (int i = 0; i < sizeof(sdo_entry_map) / sizeof(entry_addr_map_t); i++) {
+		const entry_addr_map_t *const entry = &sdo_entry_map[i];
+		uint32_t my_index = sdo_find_subindex(entry->index, entry->subindex);
+
+		if (my_index == 0) {
+			continue;
+		}
+		uint16_t index = my_index >> 16;
+		uint8_t subindex = my_index & 0xff;
+
+		const obj_desc_t *const sdo_entry = &sdo_objects[index].objdesc[subindex];
+
+		if (sdo_entry->data == NULL) {
+			continue;
+		}
+
+		fs_seek(file, entry->addr, FS_SEEK_SET);
+		fs_read(file, sdo_entry->data, sdo_entry->bitlength / 8);
+	}
+}
+
+
+static ALWAYS_INLINE int16_t search_sdo_map(uint16_t index, uint8_t subindex)
+{
+	int low = 0; 
+	int mid = <#= ctx.SdoEntriesNonVolatileCount/2 #>;
+	int high = <#= ctx.SdoEntriesNonVolatileCount-1 #>;
+
+	for (int iter = 0; iter < <#= ctx.SdoEntriesNonVolatileCountLog2Up #>; iter++) {
+		const entry_addr_map_t *const entry = &sdo_entry_map[mid];
+		if (entry->index == index && entry->subindex == subindex) {
+			return mid;
+		} else if (entry->index < index || (entry->index == index && entry->subindex < subindex)) {
+			low = mid + 1;
+		} else {
+			high = mid - 1;
+		}
+		mid = (low + high) / 2;
+	}
+	return -1;
+}
+
+
+int sdo_object_save_to_storage(struct fs_file_t *file, uint16_t index, uint8_t subindex)
+{
+	// find index/subindex in the map
+	int16_t sdo_map_idx = search_sdo_map(index, subindex);
+	if (sdo_map_idx < 0) {
+		return -1;
+	}
+	const entry_addr_map_t *const entry = &sdo_entry_map[sdo_map_idx];
+	uint32_t sdo_entry_idx = sdo_find_subindex(entry->index, entry->subindex);
+	if (sdo_entry_idx == 0) {
+		return -1;
+	}
+	int16_t obj_idx = sdo_entry_idx >> 16;
+	int16_t sub_idx = sdo_entry_idx & 0xff;
+	const obj_desc_t *const sdo_entry = &sdo_objects[obj_idx].objdesc[sub_idx];
+	if (sdo_entry->data == NULL) {
+		return -1;
+	}
+	int ret = 0;
+	ret = fs_seek(file, entry->addr, FS_SEEK_SET);
+	if (ret) {
+		goto fail_or_default;
+	}
+	ret = fs_write(file, sdo_entry->data, sdo_entry->bitlength / 8);
+
+fail_or_default:
+	return ret;
+}
+
+/**
+ * @brief Load sdo entry from index-subindex pair
+ *
+ * @param file
+ * @param index
+ * @param subindex
+ * @return int
+ */
+int sdo_object_load_from_storage(struct fs_file_t *file, uint16_t index, uint8_t subindex)
+{
+	int16_t sdo_map_idx = search_sdo_map(index, subindex);
+	if (sdo_map_idx < 0) {
+		return -1;
+	}
+	const entry_addr_map_t *const entry = &sdo_entry_map[sdo_map_idx];
+	uint32_t sdo_obj_idx = sdo_find_subindex(entry->index, entry->subindex);
+	if (sdo_obj_idx == 0) {
+		return -1;
+	}
+	int16_t obj_idx = sdo_obj_idx >> 16;
+	int16_t sub_idx = sdo_obj_idx & 0xff;
+	const obj_desc_t *const sdo_entry = &sdo_objects[obj_idx].objdesc[sub_idx];
+	if (sdo_entry->data == NULL) {
+		return -1;
+	}
+	int ret = 0;
+	ret = fs_seek(file, entry->addr, FS_SEEK_SET);
+	if (ret) {
+		goto fail_or_default;
+	}
+	ret = fs_read(file, sdo_entry->data, sdo_entry->bitlength / 8);
+
+fail_or_default:
+	return ret;
+}
+
 
 // clang-format on

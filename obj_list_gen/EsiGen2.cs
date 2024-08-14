@@ -130,6 +130,7 @@ public static partial class EsiHelperExtensions
 /// the most important class in the EsiGen2 namespace 
 /// </summary>
 /// <param name="Id"> index<<16 | sub_index  </param>
+/// <param name="NonVolatile"> if exposed, the data can be saved to eeprom, we assign an addr to this entry</param>
 /// <param name="Addr32"> if exposed, the data can be saved to eeprom, we assign an addr to this entry</param>
 /// <param name="CANOpenDataType">DTYPE_UNSIGNED8/16/32/BOOL</param>
 /// <param name="BitSize"></param>
@@ -137,9 +138,8 @@ public static partial class EsiHelperExtensions
 /// <param name="StrInstName">static str inst name</param>
 /// <param name="Value">if not exposed, this data would be statically assigned</param>
 /// <param name="DataRef">if exposed, this would be the pointer to data</param>
-public record SdoEntry(uint Id, uint Addr32, string CANOpenDataType, int BitSize, string AccessType, string StrInstName, int Value, string DataRef, string Name)
+public record SdoEntry(uint Id, bool NonVolatile, uint Addr32, string CANOpenDataType, int BitSize, string AccessType, string StrInstName, int Value, string DataRef, string Name)
 {
-	public bool Exposure => Addr32 != 0;
 	public int SubIdx => (int)(Id & 0xFFFF);
 	public string RecordTypeEntry => EsiHelperExtensions.ToCTypeDef(CANOpenDataType, Name.ToInstName(), BitSize / 8);
 	public string ArrayTypeEntry => EsiHelperExtensions.ToCTypeDef(CANOpenDataType, "elements", BitSize / 8);
@@ -344,6 +344,7 @@ public class EsiGen2ContextFactory(DeviceTypeProfile Profile, GeneratorConfig Ge
 
 						var entry = new SdoEntry(
 							Id: idx,
+							NonVolatile: non_volatile,
 							Addr32: non_volatile ? (uint)start_addr : 0,
 							CANOpenDataType: dtype,
 							BitSize: obj.BitSize,
@@ -378,12 +379,11 @@ public class EsiGen2ContextFactory(DeviceTypeProfile Profile, GeneratorConfig Ge
 							var n_ro_or_default_zero = !atype_is_ro(dataType.SubItem[subIdx].Flags.Access.Value) | default_value == 0;
 							var this_non_volatile = (subIdx == 0 & n_ro_or_default_zero & non_volatile) | (subIdx != 0 & non_volatile);
 
-
-
 							var offset = addr_offset(this_non_volatile, dataSize, align);
 
 							var subEntry = new SdoEntry(
 								Id: (uint)sdoIdx << 16 | (uint)subIdx,
+								NonVolatile: this_non_volatile,
 								Addr32: this_non_volatile ? (uint)start_addr : 0,
 								CANOpenDataType: subItemDataType.Type.ToCANOpenDType(),
 								BitSize: dataSize,
@@ -415,7 +415,6 @@ public class EsiGen2ContextFactory(DeviceTypeProfile Profile, GeneratorConfig Ge
 						{
 							var subItem = obj.Info.SubItem[subIdx];
 							var start_addr = addr & ~(align - 1);
-							var dataSize = dataType.DataTypeTypeBitSize();
 							var sub_item_dtype = dataType.SubItem[subIdx].Type.ToCANOpenDType();
 							var sub_item_data_size = dataType.SubItem[subIdx].BitSize;
 							var default_value = GetDefaultValue(subItem.Info.DefaultValue);
@@ -426,10 +425,11 @@ public class EsiGen2ContextFactory(DeviceTypeProfile Profile, GeneratorConfig Ge
 							var subItemName = dataType.SubItem[subIdx].Name.ToInstName();
 							var suffix = subIdx == 0 ? subItemName : $"elements[{subIdx - 1}]";
 
-							var offset = addr_offset(this_non_volatile, dataSize, align);
+							var offset = addr_offset(this_non_volatile, sub_item_data_size, align);
 
 							var subEntry = new SdoEntry(
 								Id: (uint)sdoIdx << 16 | (uint)subIdx,
+								NonVolatile: this_non_volatile,
 								Addr32: this_non_volatile ? (uint)start_addr : 0,
 								CANOpenDataType: sub_item_dtype,
 								BitSize: sub_item_data_size,
@@ -484,6 +484,10 @@ public class EsiGen2Context(List<DataTypeType> dataTypes, List<SdoObjBase> sdoOb
 	public List<SdoObjArray> SdoObjArrayNonVolatileButNotExpose => SdoObjectsNonVolatileButNotExpose.OfType<SdoObjArray>().ToList();
 	public List<SdoObjRecord> SdoObjRecordNonVolatileButNotExpose => SdoObjectsNonVolatileButNotExpose.OfType<SdoObjRecord>().ToList();
 
+	public List<SdoEntry> SdoEntriesNonVolatile => SdoObjects.SelectMany(x => x.GetEntries()).Where(x => x.NonVolatile).ToList();
+	public int SdoEntriesNonVolatileCount => SdoEntriesNonVolatile.Count;
+	public int SdoEntriesNonVolatileCountLog2Up => (int)Math.Ceiling(Math.Log2(SdoEntriesNonVolatileCount));
+
 	public int GetDataTypeBitSize(string dataTypeName)
 	{
 		var dataType = DataTypes.FirstOrDefault(x => x.Name == dataTypeName) ?? throw new Exception($"Failed to find data type {dataTypeName}");
@@ -494,12 +498,9 @@ public class EsiGen2Context(List<DataTypeType> dataTypes, List<SdoObjBase> sdoOb
 
 public partial class SdoObjects(EsiGen2Context ctx)
 {
-	public EsiGen2Context Ctx { get; } = ctx;
 
 }
 
 public partial class SdoObjectsHeader(EsiGen2Context ctx)
 {
-	public EsiGen2Context Ctx { get; } = ctx;
-
 }
