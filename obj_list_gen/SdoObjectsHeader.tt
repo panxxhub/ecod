@@ -173,7 +173,13 @@ extern const obj_list_t sdo_objects[];
 		var type_name = item.TypeName;
 		var inst = item.InstId;
 		var is_var = item is SdoObjVar;
+		var index = item.Index;
+		var name = item.Name;
 #>
+
+/** SDO Object <#= $"0x{index:X4}" #> 
+ * <#= name #>
+ */
 extern<#= is_var?"":" const"#> <#= type_name #> <#= inst #>;
 <#
 	} // end of foreach(var item in ctx.SdoObjectsToExpose)

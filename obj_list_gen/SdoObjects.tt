@@ -256,9 +256,11 @@ const obj_list_t sdo_objects[] = {
  * SDO ENTRY MAP
  *****************************************************************************************/
 typedef struct entry_addr_map {
- 	uint16_t index;
- 	uint8_t subindex;
+	uint16_t index;
+	uint8_t subindex;
 	uint32_t addr;
+	ssize_t size;
+	uint8_t *const data;
 } entry_addr_map_t;
 
 static const entry_addr_map_t sdo_entry_map[] = {
@@ -271,7 +273,7 @@ static const entry_addr_map_t sdo_entry_map[] = {
 				continue;
 			}
 #>
-	{ .index = <#= $"0x{item.Index:x4}" #>, .subindex = <#= $"0x{e.SubIdx:x2}" #>, .addr = <#=  $"0x{(e.Addr32/8):x4}" #>},
+	{ .index = <#= $"0x{item.Index:x4}" #>, .subindex = <#= $"0x{e.SubIdx:x2}" #>, .addr = <#=  $"0x{(e.Addr32/8):x4}" #>, .size = <#= $"0x{e.BitSize/8:x4}" #>, .data = <#= e.DataRef #> },
 <#
 		} // end of foreach(var e in entries)
 	} // end of foreach(var item in ctx.SdoObjects)
@@ -321,22 +323,8 @@ void sdo_objects_save_to_storage(struct fs_file_t *file)
 {
 	for (int i = 0; i < sizeof(sdo_entry_map) / sizeof(entry_addr_map_t); i++) {
 		const entry_addr_map_t *const entry = &sdo_entry_map[i];
-		uint32_t my_index = sdo_find_subindex(entry->index, entry->subindex);
-
-		if (my_index == 0) {
-			continue;
-		}
-		uint16_t index = my_index >> 16;
-		uint8_t subindex = my_index & 0xff;
-
-		const obj_desc_t *const sdo_entry = &sdo_objects[index].objdesc[subindex];
-
-		if (sdo_entry->data == NULL) {
-			continue;
-		}
-
 		fs_seek(file, entry->addr, FS_SEEK_SET);
-		fs_write(file, sdo_entry->data, sdo_entry->bitlength / 8);
+		fs_write(file, entry->data, entry->size);
 	}
 }
 
@@ -344,25 +332,10 @@ void sdo_objects_init_from_storage(struct fs_file_t *file)
 {
 	for (int i = 0; i < sizeof(sdo_entry_map) / sizeof(entry_addr_map_t); i++) {
 		const entry_addr_map_t *const entry = &sdo_entry_map[i];
-		uint32_t my_index = sdo_find_subindex(entry->index, entry->subindex);
-
-		if (my_index == 0) {
-			continue;
-		}
-		uint16_t index = my_index >> 16;
-		uint8_t subindex = my_index & 0xff;
-
-		const obj_desc_t *const sdo_entry = &sdo_objects[index].objdesc[subindex];
-
-		if (sdo_entry->data == NULL) {
-			continue;
-		}
-
 		fs_seek(file, entry->addr, FS_SEEK_SET);
-		fs_read(file, sdo_entry->data, sdo_entry->bitlength / 8);
+		fs_read(file, entry->data, entry->size);
 	}
 }
-
 
 static ALWAYS_INLINE int16_t search_sdo_map(uint16_t index, uint8_t subindex)
 {
@@ -384,7 +357,6 @@ static ALWAYS_INLINE int16_t search_sdo_map(uint16_t index, uint8_t subindex)
 	return -1;
 }
 
-
 int sdo_object_save_to_storage(struct fs_file_t *file, uint16_t index, uint8_t subindex)
 {
 	// find index/subindex in the map
@@ -393,22 +365,12 @@ int sdo_object_save_to_storage(struct fs_file_t *file, uint16_t index, uint8_t s
 		return -1;
 	}
 	const entry_addr_map_t *const entry = &sdo_entry_map[sdo_map_idx];
-	uint32_t sdo_entry_idx = sdo_find_subindex(entry->index, entry->subindex);
-	if (sdo_entry_idx == 0) {
-		return -1;
-	}
-	int16_t obj_idx = sdo_entry_idx >> 16;
-	int16_t sub_idx = sdo_entry_idx & 0xff;
-	const obj_desc_t *const sdo_entry = &sdo_objects[obj_idx].objdesc[sub_idx];
-	if (sdo_entry->data == NULL) {
-		return -1;
-	}
 	int ret = 0;
 	ret = fs_seek(file, entry->addr, FS_SEEK_SET);
 	if (ret) {
 		goto fail_or_default;
 	}
-	ret = fs_write(file, sdo_entry->data, sdo_entry->bitlength / 8);
+	ret = fs_write(file, entry->data, entry->size);
 
 fail_or_default:
 	return ret;
@@ -429,26 +391,15 @@ int sdo_object_load_from_storage(struct fs_file_t *file, uint16_t index, uint8_t
 		return -1;
 	}
 	const entry_addr_map_t *const entry = &sdo_entry_map[sdo_map_idx];
-	uint32_t sdo_obj_idx = sdo_find_subindex(entry->index, entry->subindex);
-	if (sdo_obj_idx == 0) {
-		return -1;
-	}
-	int16_t obj_idx = sdo_obj_idx >> 16;
-	int16_t sub_idx = sdo_obj_idx & 0xff;
-	const obj_desc_t *const sdo_entry = &sdo_objects[obj_idx].objdesc[sub_idx];
-	if (sdo_entry->data == NULL) {
-		return -1;
-	}
 	int ret = 0;
 	ret = fs_seek(file, entry->addr, FS_SEEK_SET);
 	if (ret) {
 		goto fail_or_default;
 	}
-	ret = fs_read(file, sdo_entry->data, sdo_entry->bitlength / 8);
+	ret = fs_read(file, entry->data, entry->size);
 
 fail_or_default:
 	return ret;
 }
-
 
 // clang-format on
