@@ -340,7 +340,7 @@ public class EsiGen2ContextFactory(DeviceTypeProfile Profile, GeneratorConfig Ge
 						var name = obj.Name[0].Value;
 						var name_str_inst_name = GetInstName(indexedNames, name);
 						var is_string = dtype == "DTYPE_OCTET_STRING" || dtype == "DTYPE_VISIBLE_STRING";
-						var data_ref = non_volatile ? (is_string ? $"{name.ToInstName()}" : $"(uint8_t*)(&{name.ToInstName()})") : "NULL";
+						var data_ref = non_volatile ? (is_string ? $"(uint8_t*){name.ToInstName()}" : $"(uint8_t*)(&{name.ToInstName()})") : "NULL";
 
 						var entry = new SdoEntry(
 							Id: idx,

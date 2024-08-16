@@ -1,7 +1,6 @@
 <#@ output extension=".h" #>
 <#@ template language="C#" #>
 // clang-format off
-
 /**
  * THIS FILE IS AUTO GENERATED 
  * GENERATED AT <#= $"{DateTime.Now:yyyy-MM-dd HH:mm:ss}" #>
@@ -11,7 +10,18 @@
 #ifndef __ZEPHYR_SDO_OBJECTS_H__
 #define __ZEPHYR_SDO_OBJECTS_H__
 
+#ifdef ZEPHYR_VERION_CODE
+#include <zephyr/fs/fs.h>
 #include <zephyr/kernel.h>
+#else
+#define ALWAYS_INLINE
+#include <stdbool.h>
+#include <stdint.h>
+#include <stdio.h>
+struct fs_file_t {
+  FILE *file_p;
+};
+#endif
 
 typedef struct obj_desc {
 	uint16_t subindex;
@@ -273,7 +283,6 @@ void sdo_restore_defaults_index(uint16_t index);
  */
 void sdo_restore_defaults_subindex(uint16_t index, uint8_t subindex);
 
-#include <zephyr/fs/fs.h>
 /**
  * Load the SDO objects from the non-volatile storage.
  * This function is called when the user called the function to save all the configuration to the non-volatile storage.

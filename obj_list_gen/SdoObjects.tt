@@ -1,7 +1,6 @@
 <#@ output extension=".c" #>
 <#@ template language="C#" #>
 // clang-format off
-
 /**
  * THIS FILE IS AUTO GENERATED 
  * GENERATED AT <#= $"{DateTime.Now:yyyy-MM-dd HH:mm:ss}" #>
@@ -9,6 +8,12 @@
  */
 
 #include <sdo/sdo_list.h>
+
+#ifndef ZEPHYR_VERSION_CODE
+#include <stdio.h>
+#include <stddef.h>
+#include <unistd.h>
+#endif
 
 /******************************************************************************************
  * PRE DEFINED STRINGS
@@ -280,8 +285,6 @@ static const entry_addr_map_t sdo_entry_map[] = {
 #>
 };
 
-
-
 #include <string.h>
 void sdo_restore_defaults(void)
 {
@@ -323,8 +326,13 @@ void sdo_objects_save_to_storage(struct fs_file_t *file)
 {
 	for (int i = 0; i < sizeof(sdo_entry_map) / sizeof(entry_addr_map_t); i++) {
 		const entry_addr_map_t *const entry = &sdo_entry_map[i];
+#ifdef ZEPHYR_VERSION_CODE
 		fs_seek(file, entry->addr, FS_SEEK_SET);
 		fs_write(file, entry->data, entry->size);
+#else
+		fseek(file->file_p, entry->addr, SEEK_SET);
+		fwrite(entry->data, 1, entry->size, file->file_p);
+#endif
 	}
 }
 
@@ -332,10 +340,17 @@ void sdo_objects_init_from_storage(struct fs_file_t *file)
 {
 	for (int i = 0; i < sizeof(sdo_entry_map) / sizeof(entry_addr_map_t); i++) {
 		const entry_addr_map_t *const entry = &sdo_entry_map[i];
+#ifdef ZEPHYR_VERSION_CODE
 		fs_seek(file, entry->addr, FS_SEEK_SET);
 		fs_read(file, entry->data, entry->size);
+#else
+		fseek(file->file_p, entry->addr, SEEK_SET);
+		fread(entry->data, 1, entry->size, file->file_p);
+#endif
 	}
 }
+
+
 
 static ALWAYS_INLINE int16_t search_sdo_map(uint16_t index, uint8_t subindex)
 {
@@ -366,11 +381,22 @@ int sdo_object_save_to_storage(struct fs_file_t *file, uint16_t index, uint8_t s
 	}
 	const entry_addr_map_t *const entry = &sdo_entry_map[sdo_map_idx];
 	int ret = 0;
+
+#ifdef ZEPHYR_VERSION_CODE
 	ret = fs_seek(file, entry->addr, FS_SEEK_SET);
+#else
+	ret = fseek(file->file_p, entry->addr, SEEK_SET);
+#endif
+
 	if (ret) {
 		goto fail_or_default;
 	}
+
+#ifdef ZEPHYR_VERSION_CODE
 	ret = fs_write(file, entry->data, entry->size);
+#else
+	ret = fwrite(entry->data, 1, entry->size, file->file_p);
+#endif
 
 fail_or_default:
 	return ret;
@@ -392,11 +418,20 @@ int sdo_object_load_from_storage(struct fs_file_t *file, uint16_t index, uint8_t
 	}
 	const entry_addr_map_t *const entry = &sdo_entry_map[sdo_map_idx];
 	int ret = 0;
+#ifdef ZEPHYR_VERSION_CODE
 	ret = fs_seek(file, entry->addr, FS_SEEK_SET);
+#else
+	ret = fseek(file->file_p, entry->addr, SEEK_SET);
+#endif
 	if (ret) {
 		goto fail_or_default;
 	}
+#ifdef ZEPHYR_VERSION_CODE
 	ret = fs_read(file, entry->data, entry->size);
+#else
+	// ret = read(file->fd, entry->data, entry->size);	
+	ret = fread(entry->data, 1, entry->size, file->file_p);
+#endif
 
 fail_or_default:
 	return ret;
