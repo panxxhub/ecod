@@ -85,7 +85,7 @@ typedef struct <#= struct_name #> {
 			if(sub_idx>1) {
 				continue;
 			}
-			var type_entry = sub_idx == 0 ? item.Entries[sub_idx].RecordTypeEntry : $"{item.Entries[sub_idx].ArrayTypeEntry}[{entriesCount-1}]";
+			var type_entry = sub_idx == 0 ? item.Entries[sub_idx].RecordTypeEntry : $"const {item.Entries[sub_idx].ArrayTypeEntry}[{entriesCount-1}]";
 #>
   <#= type_entry #>;
 <#
@@ -277,8 +277,9 @@ static const entry_addr_map_t sdo_entry_map[] = {
 			if (!non_volatile) {
 				continue;
 			}
+			var size = (int)Math.Ceiling(e.BitSize / 8.0);
 #>
-	{ .index = <#= $"0x{item.Index:x4}" #>, .subindex = <#= $"0x{e.SubIdx:x2}" #>, .addr = <#=  $"0x{(e.Addr32/8):x4}" #>, .size = <#= $"0x{e.BitSize/8:x4}" #>, .data = <#= e.DataRef #> },
+	{ .index = <#= $"0x{item.Index:x4}" #>, .subindex = <#= $"0x{e.SubIdx:x2}" #>, .addr = <#=  $"0x{(e.Addr32/8):x4}" #>, .size = <#= $"0x{size:x4}" #>, .data = <#= e.DataRef #> },
 <#
 		} // end of foreach(var e in entries)
 	} // end of foreach(var item in ctx.SdoObjects)
