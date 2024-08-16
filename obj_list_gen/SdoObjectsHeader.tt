@@ -317,6 +317,7 @@ void sdo_objects_init_from_storage(struct fs_file_t *file);
  */
 int sdo_object_load_from_storage(struct fs_file_t *file, uint16_t index, uint8_t subindex);
 
+#define SDO_NON_VOLATILE_FILE_SIZE <#= $"0x{ctx.NonVolatileFileSize:X8}" #>
 
 #endif // __ZEPHYR_SDO_OBJECTS_H__
 // clang-format on

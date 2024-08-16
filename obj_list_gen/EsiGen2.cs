@@ -488,6 +488,13 @@ public class EsiGen2Context(List<DataTypeType> dataTypes, List<SdoObjBase> sdoOb
 	public int SdoEntriesNonVolatileCount => SdoEntriesNonVolatile.Count;
 	public int SdoEntriesNonVolatileCountLog2Up => (int)Math.Ceiling(Math.Log2(SdoEntriesNonVolatileCount));
 
+	private uint align_up(uint addr, uint align)
+	{
+		return (addr + align - 1) & ~(align - 1);
+	}
+
+	public uint NonVolatileFileSize => align_up(SdoEntriesNonVolatile.Max(x => x.Addr32) + (uint)Math.Ceiling(SdoEntriesNonVolatile.Max(x => x.BitSize) / 8.0), 64);
+
 	public int GetDataTypeBitSize(string dataTypeName)
 	{
 		var dataType = DataTypes.FirstOrDefault(x => x.Name == dataTypeName) ?? throw new Exception($"Failed to find data type {dataTypeName}");
