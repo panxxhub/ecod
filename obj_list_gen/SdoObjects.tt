@@ -9,7 +9,7 @@
 
 #include <sdo/sdo_list.h>
 
-#ifndef ZEPHYR_VERSION_CODE
+#ifdef __linux__ 
 #include <stdio.h>
 #include <stddef.h>
 #include <unistd.h>
@@ -326,7 +326,7 @@ void sdo_objects_save_to_storage(struct fs_file_t *file)
 {
 	for (int i = 0; i < sizeof(sdo_entry_map) / sizeof(entry_addr_map_t); i++) {
 		const entry_addr_map_t *const entry = &sdo_entry_map[i];
-#ifdef ZEPHYR_VERSION_CODE
+#ifndef __linux__
 		fs_seek(file, entry->addr, FS_SEEK_SET);
 		fs_write(file, entry->data, entry->size);
 #else
@@ -340,7 +340,7 @@ void sdo_objects_init_from_storage(struct fs_file_t *file)
 {
 	for (int i = 0; i < sizeof(sdo_entry_map) / sizeof(entry_addr_map_t); i++) {
 		const entry_addr_map_t *const entry = &sdo_entry_map[i];
-#ifdef ZEPHYR_VERSION_CODE
+#ifndef __linux__
 		fs_seek(file, entry->addr, FS_SEEK_SET);
 		fs_read(file, entry->data, entry->size);
 #else
@@ -382,7 +382,7 @@ int sdo_object_save_to_storage(struct fs_file_t *file, uint16_t index, uint8_t s
 	const entry_addr_map_t *const entry = &sdo_entry_map[sdo_map_idx];
 	int ret = 0;
 
-#ifdef ZEPHYR_VERSION_CODE
+#ifndef __linux__
 	ret = fs_seek(file, entry->addr, FS_SEEK_SET);
 #else
 	ret = fseek(file->file_p, entry->addr, SEEK_SET);
@@ -392,7 +392,7 @@ int sdo_object_save_to_storage(struct fs_file_t *file, uint16_t index, uint8_t s
 		goto fail_or_default;
 	}
 
-#ifdef ZEPHYR_VERSION_CODE
+#ifndef __linux__
 	ret = fs_write(file, entry->data, entry->size);
 #else
 	ret = fwrite(entry->data, 1, entry->size, file->file_p);
@@ -418,7 +418,7 @@ int sdo_object_load_from_storage(struct fs_file_t *file, uint16_t index, uint8_t
 	}
 	const entry_addr_map_t *const entry = &sdo_entry_map[sdo_map_idx];
 	int ret = 0;
-#ifdef ZEPHYR_VERSION_CODE
+#ifndef __linux__
 	ret = fs_seek(file, entry->addr, FS_SEEK_SET);
 #else
 	ret = fseek(file->file_p, entry->addr, SEEK_SET);
@@ -426,7 +426,7 @@ int sdo_object_load_from_storage(struct fs_file_t *file, uint16_t index, uint8_t
 	if (ret) {
 		goto fail_or_default;
 	}
-#ifdef ZEPHYR_VERSION_CODE
+#ifndef __linux__
 	ret = fs_read(file, entry->data, entry->size);
 #else
 	// ret = read(file->fd, entry->data, entry->size);	

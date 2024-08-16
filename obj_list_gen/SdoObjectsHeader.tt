@@ -10,10 +10,7 @@
 #ifndef __ZEPHYR_SDO_OBJECTS_H__
 #define __ZEPHYR_SDO_OBJECTS_H__
 
-#ifdef ZEPHYR_VERION_CODE
-#include <zephyr/fs/fs.h>
-#include <zephyr/kernel.h>
-#else
+#ifdef __linux__
 #define ALWAYS_INLINE
 #include <stdbool.h>
 #include <stdint.h>
@@ -21,7 +18,11 @@
 struct fs_file_t {
   FILE *file_p;
 };
+#else
+#include <zephyr/fs/fs.h>
+#include <zephyr/kernel.h>
 #endif
+
 
 typedef struct obj_desc {
 	uint16_t subindex;
