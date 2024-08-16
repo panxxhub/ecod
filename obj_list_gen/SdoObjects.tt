@@ -179,7 +179,7 @@ static <#= type_name #> <#= inst #> = {
 		var type_name = item.TypeName;
 		var inst = item.InstId;
 #>
-const <#= type_name #> <#= inst #> = {
+<#= type_name #> <#= inst #> = {
 <#
 		foreach(var sub in item.Entries) {
 			if(sub.DataRef == "NULL")
@@ -202,7 +202,7 @@ const <#= type_name #> <#= inst #> = {
 		var type_name = item.TypeName;
 		var inst = item.InstId;
 #>
-const <#= type_name #> <#= inst #> = {
+<#= type_name #> <#= inst #> = {
 <#
 		for(int sub_idx = 0; sub_idx < 2; sub_idx++) {
 			var sub = item.GetEntries()[sub_idx];

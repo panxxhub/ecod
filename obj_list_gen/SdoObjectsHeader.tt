@@ -161,7 +161,7 @@ typedef struct <#= struct_name #> {
 			if(sub_idx > 1) {
 				continue;
 			}
-			var type_entry = sub_idx == 0 ? item.Entries[sub_idx].RecordTypeEntry : $"{item.Entries[sub_idx].ArrayTypeEntry}[{entriesCount-1}]";
+			var type_entry = sub_idx == 0 ? item.Entries[sub_idx].RecordTypeEntry : $"const {item.Entries[sub_idx].ArrayTypeEntry}[{entriesCount-1}]";
 #>
   <#= type_entry #>;
 <#
@@ -183,7 +183,7 @@ extern const obj_list_t sdo_objects[];
 	foreach(var item in ctx.SdoObjectsToExpose) {
 		var type_name = item.TypeName;
 		var inst = item.InstId;
-		var is_var = item is SdoObjVar;
+		// var is_var = item is SdoObjVar;
 		var index = item.Index;
 		var name = item.Name;
 #>
@@ -191,7 +191,7 @@ extern const obj_list_t sdo_objects[];
 /** SDO Object <#= $"0x{index:X4}" #> 
  * <#= name #>
  */
-extern<#= is_var?"":" const"#> <#= type_name #> <#= inst #>;
+extern <#= type_name #> <#= inst #>;
 <#
 	} // end of foreach(var item in ctx.SdoObjectsToExpose)
 #>
