@@ -1,5 +1,6 @@
 #include <sdo/sdo_list.h>
 #include <stdio.h>
+#include <sys/stat.h>
 #include <unistd.h>
 #define SDO_FILE_NAME "sdo_list.bin"
 int main() {
@@ -26,6 +27,17 @@ int main() {
   } else {
     sdo_restore_defaults();
     sdo_objects_save_to_storage(&my_file);
+  }
+  struct stat file_stat;
+  // stat file
+  stat(SDO_FILE_NAME, &file_stat);
+
+  // assert(file_stat.st_size == SDO_NON_VOLATILE_FILE_SIZE,
+  //         "File size is not correct");
+  if (file_stat.st_size != SDO_NON_VOLATILE_FILE_SIZE) {
+    // printf("File size is not correct\n");
+    printf("File size is not correct, %ld neq %d\n", file_stat.st_size,
+           SDO_NON_VOLATILE_FILE_SIZE);
   }
 
   printf("Number of sm2: %d, 1st vel loop gain %d\n",
