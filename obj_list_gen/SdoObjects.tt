@@ -295,7 +295,8 @@ void sdo_restore_defaults(void)
 			const obj_desc_t *const entry = sdo_obj->objdesc + j;
 			if (entry->data != NULL) {
 				// restore default value
-				memcpy((void *)entry->data, &entry->value, entry->bitlength / 8);
+				size_t entry_size = (entry->bitlength + 7) / 8;
+				memcpy((void *)entry->data, &entry->value, entry_size);
 			}
 		}
 	}
@@ -308,7 +309,8 @@ void sdo_restore_defaults_index(uint16_t index)
 		const obj_desc_t *const entry = sdo_obj->objdesc + j;
 		if (entry->data != NULL) {
 			// restore default value
-			memcpy((void *)entry->data, &entry->value, entry->bitlength / 8);
+			size_t entry_size = (entry->bitlength + 7) / 8;
+			memcpy((void *)entry->data, &entry->value, entry_size);
 		}
 	}
 }
@@ -319,7 +321,8 @@ void sdo_restore_defaults_subindex(uint16_t index, uint8_t subindex)
 	const obj_desc_t *const entry = sdo_obj->objdesc + subindex;
 	if (entry->data != NULL) {
 		// restore default value
-		memcpy((void *)entry->data, &entry->value, entry->bitlength / 8);
+		size_t entry_size = (entry->bitlength + 7) / 8;
+		memcpy((void *)entry->data, &entry->value, entry_size);
 	}
 }
 

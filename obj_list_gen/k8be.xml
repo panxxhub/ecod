@@ -12595,7 +12595,19 @@
 									<DefaultValue>#x0000</DefaultValue>
 								</Info>
 								<Flags>
-									<Access>rw</Access>
+									<Access>ro</Access>
+								</Flags>
+							</Object>
+							<Object>
+								<Index>#x3A02</Index>
+								<Name>1st Current ADC DIN REVERSE</Name>
+								<Type>BOOL</Type>
+								<BitSize>1</BitSize>
+								<Info>
+									<DefaultValue>#x0001</DefaultValue>
+								</Info>
+								<Flags>
+									<Access>ro</Access>
 								</Flags>
 							</Object>
 							<Object>
@@ -12623,7 +12635,19 @@
 								</Flags>
 							</Object>
 							<Object>
-								<Index>#x3A07</Index>
+								<Index>#x3A05</Index>
+								<Name>2nd Current ADC DIN REVERSE</Name>
+								<Type>BOOL</Type>
+								<BitSize>1</BitSize>
+								<Info>
+									<DefaultValue>#x0001</DefaultValue>
+								</Info>
+								<Flags>
+									<Access>ro</Access>
+								</Flags>
+							</Object>
+							<Object>
+								<Index>#x3A06</Index>
 								<Name>3rd Current Adc Bias</Name>
 								<Type>INT</Type>
 								<BitSize>16</BitSize>
@@ -12635,7 +12659,7 @@
 								</Flags>
 							</Object>
 							<Object>
-								<Index>#x3A08</Index>
+								<Index>#x3A07</Index>
 								<Name>3rd Current ADC Sample Phase</Name>
 								<Type>INT</Type>
 								<BitSize>16</BitSize>
@@ -12646,7 +12670,18 @@
 									<Access>rw</Access>
 								</Flags>
 							</Object>
-
+							<Object>
+								<Index>#x3A08</Index>
+								<Name>3rd Current ADC DIN REVERSE</Name>
+								<Type>BOOL</Type>
+								<BitSize>1</BitSize>
+								<Info>
+									<DefaultValue>#x0001</DefaultValue>
+								</Info>
+								<Flags>
+									<Access>ro</Access>
+								</Flags>
+							</Object>
 							<Object>
 								<Index>#x3A10</Index>
 								<Name>1st Voltage ADC Bias</Name>
@@ -12670,6 +12705,18 @@
 								</Info>
 								<Flags>
 									<Access>rw</Access>
+								</Flags>
+							</Object>
+							<Object>
+								<Index>#x3A12</Index>
+								<Name>1st Voltage ADC DIN REVERSE</Name>
+								<Type>BOOL</Type>
+								<BitSize>1</BitSize>
+								<Info>
+									<DefaultValue>#x0001</DefaultValue>
+								</Info>
+								<Flags>
+									<Access>ro</Access>
 								</Flags>
 							</Object>
 
@@ -12700,7 +12747,20 @@
 							</Object>
 
 							<Object>
-								<Index>#x3A17</Index>
+								<Index>#x3A15</Index>
+								<Name>2nd Voltage ADC DIN REVERSE</Name>
+								<Type>BOOL</Type>
+								<BitSize>1</BitSize>
+								<Info>
+									<DefaultValue>#x0001</DefaultValue>
+								</Info>
+								<Flags>
+									<Access>ro</Access>
+								</Flags>
+							</Object>
+
+							<Object>
+								<Index>#x3A16</Index>
 								<Name>3rd Voltage ADC Bias</Name>
 								<Type>INT</Type>
 								<BitSize>16</BitSize>
@@ -12712,7 +12772,7 @@
 								</Flags>
 							</Object>
 							<Object>
-								<Index>#x3A18</Index>
+								<Index>#x3A17</Index>
 								<Name>3rd Voltage ADC Sample Phase</Name>
 								<Type>INT</Type>
 								<BitSize>16</BitSize>
@@ -12723,6 +12783,20 @@
 									<Access>rw</Access>
 								</Flags>
 							</Object>
+
+							<Object>
+								<Index>#x3A18</Index>
+								<Name>3rd Voltage ADC DIN REVERSE</Name>
+								<Type>BOOL</Type>
+								<BitSize>1</BitSize>
+								<Info>
+									<DefaultValue>#x0001</DefaultValue>
+								</Info>
+								<Flags>
+									<Access>ro</Access>
+								</Flags>
+							</Object>
+
 
 							<Object>
 								<Index>#x3A20</Index>
@@ -12749,6 +12823,18 @@
 								</Flags>
 							</Object>
 							<Object>
+								<Index>#x3A22</Index>
+								<Name>Bus0 Current ADC DIN REVERSE</Name>
+								<Type>BOOL</Type>
+								<BitSize>1</BitSize>
+								<Info>
+									<DefaultValue>#x0001</DefaultValue>
+								</Info>
+								<Flags>
+									<Access>ro</Access>
+								</Flags>
+							</Object>
+							<Object>
 								<Index>#x3A23</Index>
 								<Name>Bus0 Voltage ADC Bias</Name>
 								<Type>INT</Type>
@@ -12772,10 +12858,22 @@
 									<Access>rw</Access>
 								</Flags>
 							</Object>
+							<Object>
+								<Index>#x3A25</Index>
+								<Name>Bus0 Voltage ADC DIN REVERSE</Name>
+								<Type>BOOL</Type>
+								<BitSize>1</BitSize>
+								<Info>
+									<DefaultValue>#x0001</DefaultValue>
+								</Info>
+								<Flags>
+									<Access>ro</Access>
+								</Flags>
+							</Object>
 
 							<Object>
 								<Index>#x3A30</Index>
-								<Name>Encoder0 SinCos A ADC Bias</Name>
+								<Name>1st Encoder SinCos A ADC Bias</Name>
 								<Type>INT</Type>
 								<BitSize>16</BitSize>
 								<Info>
@@ -12787,7 +12885,7 @@
 							</Object>
 							<Object>
 								<Index>#x3A31</Index>
-								<Name>Encoder0 SinCos A ADC Sample Phase</Name>
+								<Name>1st Encoder SinCos A ADC Sample Phase</Name>
 								<Type>INT</Type>
 								<BitSize>16</BitSize>
 								<Info>
@@ -12797,10 +12895,23 @@
 									<Access>rw</Access>
 								</Flags>
 							</Object>
+							<Object>
+								<Index>#x3A32</Index>
+								<Name>1st Encoder SinCos A ADC DIN REVERSE</Name>
+								<Type>BOOL</Type>
+								<BitSize>1</BitSize>
+								<Info>
+									<DefaultValue>#x0001</DefaultValue>
+								</Info>
+								<Flags>
+									<Access>ro</Access>
+								</Flags>
+							</Object>
+
 
 							<Object>
 								<Index>#x3A33</Index>
-								<Name>Encoder0 SinCos B ADC Bias</Name>
+								<Name>1st Encoder SinCos B ADC Bias</Name>
 								<Type>INT</Type>
 								<BitSize>16</BitSize>
 								<Info>
@@ -12812,7 +12923,7 @@
 							</Object>
 							<Object>
 								<Index>#x3A34</Index>
-								<Name>Encoder0 SinCos B ADC Sample Phase</Name>
+								<Name>1st Encoder SinCos B ADC Sample Phase</Name>
 								<Type>INT</Type>
 								<BitSize>16</BitSize>
 								<Info>
@@ -12822,6 +12933,19 @@
 									<Access>rw</Access>
 								</Flags>
 							</Object>
+							<Object>
+								<Index>#x3A35</Index>
+								<Name>1st Encoder SinCos B ADC DIN REVERSE</Name>
+								<Type>BOOL</Type>
+								<BitSize>1</BitSize>
+								<Info>
+									<DefaultValue>#x0001</DefaultValue>
+								</Info>
+								<Flags>
+									<Access>ro</Access>
+								</Flags>
+							</Object>
+
 
 							<Object>
 								<Index>#x4304</Index>
@@ -16905,4 +17029,5 @@
 			</Device>
 		</Devices>
 	</Descriptions>
+
 </EtherCATInfo>

@@ -39,6 +39,7 @@ int main() {
     printf("File size is not correct, %ld neq %d\n", file_stat.st_size,
            SDO_NON_VOLATILE_FILE_SIZE);
   }
+  printf("din reverse %s\n", x_1st_current_adc_din_reverse ? "true" : "false");
 
   printf("Number of sm2: %d, 1st vel loop gain %d\n",
          sync_manager_channel_2.number_of_assigned_pdos,
