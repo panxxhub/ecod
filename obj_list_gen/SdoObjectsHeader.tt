@@ -258,6 +258,9 @@ static ALWAYS_INLINE uint32_t sdo_find_subindex(int32_t nidx, uint8_t subindex)
 	return -1;
 }
 
+#if defined __cplusplus
+extern "C" {
+#endif /* __cplusplus */
 
 /**
  * Restore the default values of the SDO objects.
@@ -317,7 +320,11 @@ void sdo_objects_init_from_storage(struct fs_file_t *file);
  */
 int sdo_object_load_from_storage(struct fs_file_t *file, uint16_t index, uint8_t subindex);
 
+#if defined __cplusplus
+}
+#endif /* __cplusplus */
+
 #define SDO_NON_VOLATILE_FILE_SIZE <#= $"0x{ctx.NonVolatileFileSize:X8}" #>
 
-#endif // __ZEPHYR_SDO_OBJECTS_H__
+#endif /* __ZEPHYR_SDO_OBJECTS_H__ */
 // clang-format on
