@@ -20,6 +20,12 @@
     <Generated Include="**\*.Generated.cs" />
   </ItemGroup>
 
+  <Target Name="EchoPath" BeforeTargets="BeforeBuild">
+    <Message Importance="high" Text="ProjectDir: $(ProjectDir)" />
+    <Message Importance="high" Text="RootNameSpace: $(RootNameSpace)" />
+    <Message Importance="high" Text="PATH: $(PATH)" />
+  </Target>
+
   <Target Name="TextTemplateTransform" BeforeTargets="BeforeBuild">
     <Exec WorkingDirectory="$(ProjectDir)" Command="t4 %(TextTemplate.Identity) -c $(RootNameSpace).%(TextTemplate.Filename) -o %(TextTemplate.Filename).Generated.cs" />
   </Target>
