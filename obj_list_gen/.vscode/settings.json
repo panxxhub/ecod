@@ -125,4 +125,30 @@
 		"VBUS",
 		"zynq"
 	],
+	"terminal.integrated.profiles.linux": {
+		"zsh": {
+			"path": "/usr/bin/zsh",
+			"args": [
+				"-l",
+				"-i"
+			]
+		}
+	},
+	"files.watcherExclude": {
+		"**/target": true
+	},
+	"metals.inlayHints.implicitArguments.enable": true,
+	"metals.inlayHints.implicitConversions.enable": true,
+	"dotnetAcquisitionExtension.enablePreviewFeatures": true,
+	"dotnetAcquisitionExtension.installTimeoutValue": 600,
+	"dotnetAcquisitionExtension.existingDotnetPath": [
+		{
+			"extensionId": "ms-dotnettools.csharp",
+			"path": "${env:HOME}/.dotnet/dotnet"
+		},
+		{
+			"extensionId": "ms-dotnettools.csdevkit",
+			"path": "${env:HOME}/.dotnet/dotnet"
+		},
+	]
 }

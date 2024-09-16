@@ -441,4 +441,93 @@ fail_or_default:
 	return ret;
 }
 
+#define RX_PDO_IDX 0x1c12
+#define TX_PDO_IDX 0x1c13
+/* Fetch value from object dictionary */
+#define OBJ_VALUE_FETCH(v, o) ((o).data == NULL ? *(__typeof__(v) *)(o).data : (__typeof__(v))(o).value)
+uint16_t size_of_pdo(uint16_t index, int *n_mappings, sm_map_t *mappings, int max_mappings)
+{
+	uint32_t offset = 0;
+	int32_t n_idx;
+	uint16_t pdo_mapping_obj_idx;
+	const obj_desc_t *obj_desc;
+	const obj_desc_t *obj_desc_1c1x;
+	uint8_t number_of_assigned_pdos, sub_idx, subsub_idx;
+	int map_x = 0;
+
+	if ((index != RX_PDO_IDX) && (index != TX_PDO_IDX)) {
+		return 0;
+	}
+	n_idx = sdo_find_object(index);
+	if (unlikely(n_idx < 0)) {
+		goto fail_or_default;
+	}
+
+	if (max_mappings <= 0) {
+		*n_mappings = 0;
+		goto fail_or_default;
+	}
+
+	obj_desc_1c1x = sdo_objects[n_idx].objdesc;
+	number_of_assigned_pdos = OBJ_VALUE_FETCH(number_of_assigned_pdos, obj_desc_1c1x[0]);
+	if (unlikely(number_of_assigned_pdos == 0)) {
+		*n_mappings = -1;
+		goto fail_or_default;
+	}
+
+	for (sub_idx = 1; sub_idx <= number_of_assigned_pdos; sub_idx++) {
+		pdo_mapping_obj_idx = OBJ_VALUE_FETCH(sub_idx, obj_desc_1c1x[sub_idx]);
+		int32_t pdo_mapping_obj_nidx = sdo_find_object(pdo_mapping_obj_idx);
+		if (pdo_mapping_obj_nidx < 0) {
+			*n_mappings = -1;
+			goto fail_or_default;
+		}
+
+		uint8_t maxsub;
+		obj_desc = sdo_objects[pdo_mapping_obj_nidx].objdesc;
+		maxsub = OBJ_VALUE_FETCH(maxsub, obj_desc[0]);
+
+		for (subsub_idx = 1; subsub_idx <= maxsub; subsub_idx++) {
+			uint32_t value = OBJ_VALUE_FETCH(value, obj_desc[subsub_idx]);
+			uint8_t bitlength = value;
+			uint16_t element_idx = (uint16_t)(value >> 16);
+			uint8_t element_sub_idx = (uint8_t)(value >> 8);
+			const obj_desc_t *element_mapping;
+			// if(m)
+			if (map_x == max_mappings) {
+				/* too many mapped objects */
+				*n_mappings = -1;
+				return 0;
+			}
+
+			if (element_idx == 0 && element_sub_idx == 0) {
+				/* legal, padding element */
+				element_mapping = NULL;
+			} else {
+				int32_t pdo_entry_nidx = sdo_find_object(element_idx);
+				if (pdo_entry_nidx < 0) {
+					*n_mappings = -1;
+					goto fail_or_default;
+				}
+				int16_t pdo_subentry_nidx = sdo_find_subindex(pdo_entry_nidx, element_sub_idx);
+				if (pdo_subentry_nidx < 0) {
+					/* mapped subindex does not exist */
+					*n_mappings = -1;
+					goto fail_or_default;
+				}
+				element_mapping = &sdo_objects[n_idx].objdesc[pdo_subentry_nidx];
+			}
+
+			mappings[map_x].obj_desc = element_mapping;
+			mappings[map_x].obj_list_items = &sdo_objects[n_idx];
+			mappings[map_x].offset = offset;
+			offset += bitlength;
+			map_x++;
+		}
+	}
+
+fail_or_default:
+	return offset;
+}
+
 // clang-format on

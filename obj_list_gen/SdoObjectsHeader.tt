@@ -43,6 +43,12 @@ typedef struct obj_list {
 	const obj_desc_t *const objdesc;
 } obj_list_t;
 
+typedef struct sm_map {
+	const obj_desc_t *obj_desc;
+	const obj_list_t *obj_list_items;
+	uint32_t offset;
+} sm_map_t;
+
 #define OBJH_READ  0
 #define OBJH_WRITE 1
 
@@ -319,6 +325,18 @@ void sdo_objects_init_from_storage(struct fs_file_t *file);
  * @return int 
  */
 int sdo_object_load_from_storage(struct fs_file_t *file, uint16_t index, uint8_t subindex);
+
+/**
+ * @brief
+ *
+ * @param[in] index = SM index
+ * @param[out] n_mappings = number of mapped objects in SM, or -1 if mapping is invalid
+ * @param[out] mappings = list of mapped objects in SM
+ * @param[out] max_mappings = maximum number of mappings in SM
+ * @return size of RxPDO or TxPDO in bytes.
+ */
+uint16_t size_of_pdo(uint16_t index, int *n_mappings, sm_map_t *mappings, int max_mappings);
+
 
 #if defined __cplusplus
 }
