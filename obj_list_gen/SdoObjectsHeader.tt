@@ -10,10 +10,11 @@
 #ifndef __ZEPHYR_SDO_OBJECTS_H__
 #define __ZEPHYR_SDO_OBJECTS_H__
 
+#include <stdint.h>
+#include <string.h>
 #ifdef __linux__
 #define ALWAYS_INLINE
 #include <stdbool.h>
-#include <stdint.h>
 #include <stdio.h>
 struct fs_file_t {
   FILE *file_p;
@@ -23,13 +24,13 @@ struct fs_file_t {
 #include <zephyr/kernel.h>
 #endif
 
-
 typedef struct obj_desc {
 	uint16_t subindex;
 	uint16_t datatype;
 	uint16_t bitlength;
 	uint16_t flags;
-	const char *name;
+	const char * name;
+	const uint32_t name_size;
 	uint32_t value;
 	uint8_t *data; // used for visible string type
 } obj_desc_t;
@@ -39,7 +40,8 @@ typedef struct obj_list {
 	uint16_t objtype;
 	uint8_t maxsub;
 	uint8_t pad1;
-	const char *name;
+	const char * name;
+	const uint32_t name_size;
 	const obj_desc_t *const objdesc;
 } obj_list_t;
 
@@ -110,6 +112,9 @@ typedef struct sm_map {
 #define ATYPE_RWpre      (ATYPE_Wpre | ATYPE_RO)
 #define ATYPE_RWop       (ATYPE_Wop | ATYPE_RO)
 #define ATYPE_RWpre_safe (ATYPE_Wpre | ATYPE_Wsafe | ATYPE_RO)
+
+#define BITS2BYTES(b) ((b + 7U) >> 3)
+#define BITSPOS2BYTESOFFSET(b) (b >> 3)
 
 /******************************************************************************************
  *  EXPOSED OBJECTS DEFINITIONS
@@ -262,6 +267,202 @@ static ALWAYS_INLINE uint32_t sdo_find_subindex(int32_t nidx, uint8_t subindex)
 		mid = (low + high) / 2;
 	}
 	return -1;
+}
+
+static ALWAYS_INLINE uint64_t sdo_get_value(const obj_desc_t *obj)
+{
+	uint64_t value = 0;
+
+	switch (obj->datatype) {
+
+	case DTYPE_BIT1:
+	case DTYPE_BIT2:
+	case DTYPE_BIT3:
+	case DTYPE_BIT4:
+	case DTYPE_BIT5:
+	case DTYPE_BIT6:
+	case DTYPE_BIT7:
+	case DTYPE_BIT8:
+	case DTYPE_BOOLEAN:
+	case DTYPE_UNSIGNED8:
+	case DTYPE_INTEGER8:
+	case DTYPE_BITARR8:
+		value = *(uint8_t *)obj->data;
+		break;
+	case DTYPE_UNSIGNED16:
+	case DTYPE_INTEGER16:
+	case DTYPE_BITARR16:
+		value = *(uint16_t *)obj->data;
+		break;
+
+	case DTYPE_REAL32:
+	case DTYPE_UNSIGNED32:
+	case DTYPE_INTEGER32:
+	case DTYPE_BITARR32:
+		value = *(uint32_t *)obj->data;
+		break;
+
+	case DTYPE_REAL64:
+	case DTYPE_UNSIGNED64:
+	case DTYPE_INTEGER64:
+		/* FIXME: must be atomic */
+		value = *(uint64_t *)obj->data;
+		break;
+
+	default:
+		break;
+	}
+
+	return value;
+}
+
+static ALWAYS_INLINE void sdo_set_value(const obj_desc_t *obj, uint64_t value)
+{
+	switch (obj->datatype) {
+
+	case DTYPE_BIT1:
+	case DTYPE_BIT2:
+	case DTYPE_BIT3:
+	case DTYPE_BIT4:
+	case DTYPE_BIT5:
+	case DTYPE_BIT6:
+	case DTYPE_BIT7:
+	case DTYPE_BIT8:
+	case DTYPE_BOOLEAN:
+	case DTYPE_UNSIGNED8:
+	case DTYPE_INTEGER8:
+	case DTYPE_BITARR8:
+		*(uint8_t *)obj->data = value & UINT8_MAX;
+		break;
+	case DTYPE_UNSIGNED16:
+	case DTYPE_INTEGER16:
+	case DTYPE_BITARR16:
+		*(uint16_t *)obj->data = value & UINT16_MAX;
+		break;
+
+	case DTYPE_REAL32:
+	case DTYPE_UNSIGNED32:
+	case DTYPE_INTEGER32:
+	case DTYPE_BITARR32:
+		*(uint32_t *)obj->data = value & UINT32_MAX;
+		break;
+
+	case DTYPE_REAL64:
+	case DTYPE_UNSIGNED64:
+	case DTYPE_INTEGER64:
+		*(uint64_t *)obj->data = value;
+		break;
+
+	default:
+		break;
+	}
+}
+
+/**
+ * @brief Get value from a bit slice of a bitmap.
+ *
+ * @param[in] bitmap = bitmap containing value
+ * @param[in] offset = start offset
+ * @param[in] length = number of bits to get
+ * @return bit_slice value
+ */
+static ALWAYS_INLINE uint64_t pdo_bit_slice_get(uint64_t *bitmap, unsigned int offset, unsigned int length)
+{
+	const unsigned int word_offset = offset / 64;
+	const unsigned int bit_offset = offset % 64;
+	const uint64_t mask = (length == 64) ? UINT64_MAX : ((1ULL << length) - 1);
+	uint64_t w0, w1 = 0;
+
+	/* Get the least significant word */
+	w0 = bitmap[word_offset] >> bit_offset;
+
+	/* Get the most significant word */
+	if (bit_offset + length > 64) {
+		w1 = bitmap[word_offset + 1] << (64 - bit_offset);
+	}
+
+	return (w1 | w0) & mask;
+}
+
+/**
+ * @brief Set value to a bit slice of a bitmap.
+ *
+ * @param[in] bitmap
+ * @param[in] offset
+ * @param[in] length
+ * @param[in] value
+ * @return ALWAYS_INLINE
+ */
+static ALWAYS_INLINE void pdo_bit_slice_set(uint64_t *bitmap, unsigned int offset, unsigned int length, uint64_t value)
+{
+
+	const unsigned int word_offset = offset / 64;
+	const unsigned int bit_offset = offset % 64;
+	const uint64_t mask = (length == 64) ? UINT64_MAX : ((1ULL << length) - 1);
+
+	/* set the least significant word */
+	const uint64_t mask0 = mask << bit_offset;
+	uint64_t value0 = value << bit_offset;
+	uint64_t w0 = (bitmap[word_offset] & ~mask0) | (value0 & mask0);
+	bitmap[word_offset] = w0;
+
+	/* set the most significant word */
+	if (bit_offset + length > 64) {
+		const uint64_t mask1 = mask >> (64 - bit_offset);
+		const uint64_t value1 = value >> (64 - bit_offset);
+		uint64_t w1 = (bitmap[word_offset + 1] & ~mask1) | (value1 & mask1);
+		bitmap[word_offset + 1] = w1;
+	}
+}
+
+/**
+ * @brief
+ *
+ * @param buffer
+ * @param n_mappings
+ * @param mappings
+ */
+static ALWAYS_INLINE void coe_pdo_pack(uint8_t *buffer, int n_mappings, sm_map_t *mappings)
+{
+	int ix;
+	for (ix = 0; ix < n_mappings; ix++) {
+		const obj_desc_t *obj = mappings[ix].obj_desc;
+		uint32_t offset = mappings[ix].offset;
+		if (unlikely(obj != NULL)) {
+			if (unlikely(obj->bitlength > 64)) {
+				memcpy(&buffer[BITSPOS2BYTESOFFSET(offset)], obj->data, BITS2BYTES(obj->bitlength));
+			} else {
+				uint64_t value = sdo_get_value(obj);
+				pdo_bit_slice_set((uint64_t *)buffer, offset, obj->bitlength, value);
+			}
+		}
+	}
+}
+
+/**
+ * @brief unpack process data
+ *
+ * @param[in] buffer = output process data
+ * @param[in] n_mappings = number of mappings
+ * @param[in] mappings = list of mappings in SM
+ * @return ALWAYS_INLINE
+ */
+static ALWAYS_INLINE void coe_pdo_unpack(uint8_t *buffer, int n_mappings, sm_map_t *mappings)
+{
+
+	for (int idx = 0; idx < n_mappings; idx++) {
+		const obj_desc_t *obj = mappings[idx].obj_desc;
+		uint32_t offset = mappings[idx].offset;
+
+		if (unlikely(obj != NULL)) {
+			if (unlikely(obj->bitlength > 64)) {
+				memcpy(obj->data, &buffer[BITSPOS2BYTESOFFSET(offset)], BITS2BYTES(obj->bitlength));
+			} else {
+				uint64_t value = pdo_bit_slice_get((uint64_t *)buffer, offset, obj->bitlength);
+				sdo_set_value(obj, value);
+			}
+		}
+	}
 }
 
 #if defined __cplusplus

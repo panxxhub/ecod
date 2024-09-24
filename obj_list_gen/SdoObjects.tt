@@ -234,7 +234,7 @@ const obj_desc_t <#= obj.SdoInstName #>[] = {
 <#
 		foreach(var e in entries) {
 #>
-	{ .subindex = <#= $"0x{e.SubIdx:x2}" #>, .datatype= <#= e.CANOpenDataType #>, .bitlength = <#= $"0x{e.BitSize:x2}" #>, .name = <#= e.StrInstName #>, .flags = <#= e.AccessType #>, .value = <#= $"0x{e.Value:x8}" #>, .data = <#= e.DataRef #>   },
+	{ .subindex = <#= $"0x{e.SubIdx:x2}" #>, .datatype= <#= e.CANOpenDataType #>, .bitlength = <#= $"0x{e.BitSize:x2}" #>, .name = <#= e.StrInstName #>, .name_size = <#= e.NameSize #>, .flags = <#= e.AccessType #>, .value = <#= $"0x{e.Value:x8}" #>, .data = <#= e.DataRef #>   },
 <#
 		} // end of foreach(var e in entries)
 #>
@@ -251,7 +251,7 @@ const obj_list_t sdo_objects[] = {
 	foreach(var item in ctx.SdoObjects) {
 
 #>
-  { .index = <#= $"0x{item.Index:x4}" #>, .objtype = <#= item.ObjectType #>, .maxsub = <#= item.MaxSubIndex #>, .pad1 = 0, .name = <#= item.StrInstName #>, .objdesc = sdo_<#= $"{item.Index:x4}"#> },
+  { .index = <#= $"0x{item.Index:x4}" #>, .objtype = <#= item.ObjectType #>, .maxsub = <#= item.MaxSubIndex #>, .pad1 = 0, .name = <#= item.StrInstName #>, .name_size = <#= item.NameSize #>, .objdesc = sdo_<#= $"{item.Index:x4}"#> },
 <#
 	} // end of foreach(var item in ctx.SdoObjects)
 #>

@@ -159,6 +159,8 @@ public record SdoEntry(uint Id, bool NonVolatile, uint Addr32, string CANOpenDat
 		// "DTYPE_OCTET_STRING" => $"{{{string.Join(", ", Enumerable.Repeat("0", BitSize / 8))}}}",
 		// "DTYPE_VISIBLE_STRING" => $"{{{string.Join(", ", Enumerable.Repeat("0", BitSize / 8))}}}",
 	};
+
+	public int NameSize => Name.Length + 1;
 }
 
 public abstract class SdoObjBase(int index, bool expose, bool non_volatile, string name, string str_inst_name)
@@ -169,6 +171,7 @@ public abstract class SdoObjBase(int index, bool expose, bool non_volatile, stri
 	public bool NonVolatile { get; } = non_volatile;
 	public string Name { get; } = name;
 	public string StrInstName { get; } = str_inst_name;
+	public int NameSize => Name.Length + 1;
 	public string TypeName => $"{Name.ToInstName()}_t";
 	public string StructName => $"{Name.ToInstName()}";
 	public string InstId => $"{Name.ToInstName()}";

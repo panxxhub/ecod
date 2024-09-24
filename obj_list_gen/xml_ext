@@ -1,0 +1,12 @@
+index 3B00, DT3B00
+struct step_configuration {
+	uint8_t numbfer_of_entries;
+	uint16_t clk_div;
+	uint32_t delay0;
+	uint32_t width;
+	uint32_t delay1;
+	uint8_t pulse_width_type;
+	uint32_t signal_level_threshold;
+	uint16_t step_sw_state;
+	uint16_t zero_sw_state;
+}
